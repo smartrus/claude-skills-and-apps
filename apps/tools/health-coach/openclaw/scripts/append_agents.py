@@ -9,18 +9,35 @@ health-coach agent.
 Usage:
     python3 append_agents.py
     python3 append_agents.py /path/to/AGENTS.md   # custom path
+    python3 append_agents.py --force               # re-append even if present
 
 The default path is /home/node/.openclaw/workspace/AGENTS.md (inside Docker).
 To run inside the container:
     docker exec -i <container> python3 - < append_agents.py
 """
-import sys
+import argparse
 import os
+import sys
 
 # Default path — change if your OpenClaw workspace is elsewhere
 DEFAULT_PATH = "/home/node/.openclaw/workspace/AGENTS.md"
 
-target = sys.argv[1] if len(sys.argv) > 1 else DEFAULT_PATH
+parser = argparse.ArgumentParser(
+    description="Append the Health Tracker section to AGENTS.md"
+)
+parser.add_argument(
+    "path",
+    nargs="?",
+    default=DEFAULT_PATH,
+    help=f"Path to AGENTS.md (default: {DEFAULT_PATH})",
+)
+parser.add_argument(
+    "--force",
+    action="store_true",
+    help="Append even if the section already exists",
+)
+args = parser.parse_args()
+target = args.path
 
 HEALTH_TRACKER_SECTION = """
 
@@ -75,9 +92,10 @@ else:
         existing = f.read()
     if MARKER in existing:
         print(f"Skipped: Health tracker section already present in {target}")
-        print("Use --force to append anyway.")
-        if "--force" not in sys.argv:
+        if not args.force:
+            print("Use --force to append anyway.")
             sys.exit(0)
+        print("--force specified, appending anyway.")
 
 with open(target, "a") as f:
     f.write(HEALTH_TRACKER_SECTION)

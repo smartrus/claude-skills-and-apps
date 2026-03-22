@@ -62,16 +62,27 @@ class HealthHandler(SimpleHTTPRequestHandler):
         self.wfile.write(body)
 
     def _get_water_goal(self):
-        """Read water goal from user_profile.json, default to 8."""
+        """Read water goal from user_profile.json, default to 8.
+
+        Supports both top-level keys (waterGoal, water_goal) and the
+        documented nested schema (targets.water_glasses).
+        """
         profile_path = os.path.join(
             os.path.dirname(os.path.abspath(ARGS.data_file)), "user_profile.json"
         )
         try:
             with open(profile_path, "r") as f:
                 profile = json.load(f)
+            # Prefer explicit top-level water goal fields (backwards-compatible)
             goal = profile.get("waterGoal") or profile.get("water_goal")
             if isinstance(goal, int) and goal > 0:
                 return goal
+            # Fall back to documented nested schema: targets.water_glasses
+            targets = profile.get("targets") or {}
+            if isinstance(targets, dict):
+                goal = targets.get("water_glasses")
+                if isinstance(goal, int) and goal > 0:
+                    return goal
         except (OSError, json.JSONDecodeError, AttributeError):
             pass
         return 8

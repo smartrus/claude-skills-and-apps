@@ -28,6 +28,7 @@ Once you have answers, write `data/user_profile.json`:
 {
   "name": "Alex",
   "goals": ["weight management", "heart health"],
+  "waterGoal": 8,
   "targets": {
     "water_glasses": 8,
     "sleep_hours": 7,
