@@ -61,6 +61,21 @@ class HealthHandler(SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+    def _get_water_goal(self):
+        """Read water goal from user_profile.json, default to 8."""
+        profile_path = os.path.join(
+            os.path.dirname(os.path.abspath(ARGS.data_file)), "user_profile.json"
+        )
+        try:
+            with open(profile_path, "r") as f:
+                profile = json.load(f)
+            goal = profile.get("waterGoal") or profile.get("water_goal")
+            if isinstance(goal, int) and goal > 0:
+                return goal
+        except (OSError, json.JSONDecodeError, AttributeError):
+            pass
+        return 8
+
     def _read_data(self):
         data_file = os.path.abspath(ARGS.data_file)
         os.makedirs(os.path.dirname(data_file), exist_ok=True)
@@ -143,9 +158,8 @@ class HealthHandler(SimpleHTTPRequestHandler):
                     )
                     return
                 day["water"] = max(day.get("water", 0), min(water_value, 20))
-                # Derive l1 from water count
-                water_goal = 8  # default; could be user-configurable
-                day["habits"]["l1"] = day["water"] >= water_goal
+                # Derive l1 from water count (goal from user profile)
+                day["habits"]["l1"] = day["water"] >= self._get_water_goal()
             elif habit_id == "notes":
                 existing = day.get("notes", "")
                 day["notes"] = f"{existing} | {value}" if existing else value
@@ -157,7 +171,10 @@ class HealthHandler(SimpleHTTPRequestHandler):
                     parsed = value.lower() in ("true", "1", "yes", "done")
                 else:
                     parsed = bool(value)
-                day["habits"][habit_id] = parsed
+                # Additive logging: once true, don't overwrite with false
+                existing = day.get("habits", {}).get(habit_id, False)
+                if parsed or not existing:
+                    day["habits"][habit_id] = parsed
 
             self._write_data(data)
 

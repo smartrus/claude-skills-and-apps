@@ -153,9 +153,11 @@ The sync server exposes these endpoints:
 |--------|------|-------------|
 | GET | `/` | Serves the dashboard |
 | GET | `/data` | Returns health_data.json |
-| POST | `/data` | Overwrites health_data.json (from dashboard) |
+| POST | `/data` | Overwrites health_data.json (for custom clients or server-side sync) |
 | POST | `/checkin` | Individual habit update (from agents) |
 | GET | `/health` | Health check |
+
+> **Note:** The dashboard merges server data on load (agent check-ins via `/checkin`) and uses `localStorage` for interactive toggling. The `/data` endpoints are available for custom dashboards or API clients.
 
 ### POST /checkin example
 

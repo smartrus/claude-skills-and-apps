@@ -1,6 +1,8 @@
-# Runtime data files — do not commit
-*.json
-!.gitkeep
-
-# User profile (created at runtime)
+# Runtime data files — created at first run, do not commit
+health_data.json
 user_profile.json
+*.bak
+
+# Keep the directory itself
+!.gitkeep
+!.gitignore

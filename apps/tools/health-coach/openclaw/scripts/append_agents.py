@@ -63,11 +63,21 @@ Water is tracked as a number (not boolean). Use the highest number mentioned.
 If no user profile exists yet, ask the user about their health goals and targets before tracking. See skills/health-tracker/SKILL.md for the full onboarding flow.
 """
 
+MARKER = "## Health Tracker — ALWAYS ACTIVE"
+
 if not os.path.exists(target):
     print(f"Warning: {target} does not exist — creating it")
     dir_name = os.path.dirname(target)
     if dir_name:
         os.makedirs(dir_name, exist_ok=True)
+else:
+    with open(target, "r") as f:
+        existing = f.read()
+    if MARKER in existing:
+        print(f"Skipped: Health tracker section already present in {target}")
+        print("Use --force to append anyway.")
+        if "--force" not in sys.argv:
+            sys.exit(0)
 
 with open(target, "a") as f:
     f.write(HEALTH_TRACKER_SECTION)
