@@ -1,0 +1,81 @@
+# Health Coach — Cron Reminders Template
+#
+# Customize these reminders for your schedule and messaging platform.
+# All times should be adjusted to your local timezone.
+#
+# Usage:
+#   1. Copy this file to your agent platform's cron/scheduler directory
+#   2. Edit the schedule times and timezone to match your routine
+#   3. Adapt the message format for your messaging integration
+#
+# Compatible with: crontab, launchd, systemd timers, or any AI agent scheduler
+
+jobs:
+  - name: "Health: Morning kickoff"
+    schedule: "30 6 * * *"
+    tz: "YOUR_TIMEZONE"  # e.g., America/New_York, Europe/London
+    message: >
+      Good morning! Start with warm water + lemon,
+      then head out for your 30-45 min walk. Morning sunlight
+      improves insulin sensitivity. Reply when done!
+
+  - name: "Health: Breakfast check-in"
+    schedule: "30 7 * * *"
+    tz: "YOUR_TIMEZONE"
+    message: >
+      What did you have for breakfast? Ideal: whole grains (oats),
+      berries, nuts, cinnamon, black coffee or green tea.
+
+  - name: "Health: Lunch reminder"
+    schedule: "30 12 * * *"
+    tz: "YOUR_TIMEZONE"
+    message: >
+      Lunch time! Remember: veggies first, then protein, then carbs
+      (this order can significantly reduce blood sugar spikes).
+      How many glasses of water so far?
+
+  - name: "Health: Post-lunch walk"
+    schedule: "50 12 * * *"
+    tz: "YOUR_TIMEZONE"
+    message: >
+      A 10-min walk now can lower post-meal blood sugar spikes
+      by 30-50%. Even a short stroll helps!
+
+  - name: "Health: Afternoon check"
+    schedule: "30 15 * * *"
+    tz: "YOUR_TIMEZONE"
+    message: >
+      Afternoon check! How's the water count?
+      Grab some almonds or an apple for a healthy snack.
+
+  - name: "Health: Workout reminder"
+    schedule: "0 17 * * *"
+    tz: "YOUR_TIMEZONE"
+    message: >
+      Time for today's session! Check your weekly exercise plan
+      for what's scheduled. Even 20 minutes counts!
+
+  - name: "Health: Post-dinner walk"
+    schedule: "0 19 * * *"
+    tz: "YOUR_TIMEZONE"
+    message: >
+      Dinner done? Time for your post-dinner walk — the most
+      important walk of the day for blood sugar. Even 10 min counts!
+
+  - name: "Health: Evening check-in"
+    schedule: "30 21 * * *"
+    tz: "YOUR_TIMEZONE"
+    message: >
+      Evening check-in! Quick recap of today:
+      Water glasses? Veggies at meals? Nuts? Walks?
+      Workout or yoga? Breathing exercises?
+      Reply with whatever you did — I'll log it all!
+
+  - name: "Health: Weekly summary"
+    schedule: "0 20 * * 0"
+    tz: "YOUR_TIMEZONE"
+    message: >
+      Weekly health summary — review the past 7 days of data.
+      Calculate completion percentage, streak days, and
+      most/least completed habits. Provide a motivating summary
+      with one specific suggestion for next week.

@@ -1,0 +1,83 @@
+# Health Coach — OpenClaw Cron Reminders
+#
+# Deploy to your OpenClaw instance:
+#   1. Edit YOUR_TIMEZONE below (e.g., Europe/Rome, America/New_York)
+#   2. Copy to your OpenClaw crons directory:
+#      scp health-reminders.yaml your-server:~/.openclaw/crons/
+#   3. Or if running in Docker:
+#      docker cp health-reminders.yaml openclaw-gateway:/home/node/.openclaw/crons/
+#
+# Manage deployed crons:
+#   CONTAINER=$(docker ps --filter name=openclaw-gateway -q)
+#   docker exec $CONTAINER node dist/index.js cron list
+#   docker exec $CONTAINER node dist/index.js cron edit <job-id> --disable
+
+jobs:
+  - name: "Health: Morning kickoff"
+    schedule: "30 6 * * *"
+    tz: YOUR_TIMEZONE
+    message: >
+      Good morning! Start with warm water + lemon,
+      then head out for your 30-45 min walk. Morning sunlight
+      improves insulin sensitivity. Reply when done!
+
+  - name: "Health: Breakfast check-in"
+    schedule: "30 7 * * *"
+    tz: YOUR_TIMEZONE
+    message: >
+      What did you have for breakfast? Ideal: whole grains (oats),
+      berries, nuts, cinnamon, black coffee or green tea.
+
+  - name: "Health: Lunch reminder"
+    schedule: "30 12 * * *"
+    tz: YOUR_TIMEZONE
+    message: >
+      Lunch time! Remember: veggies first, then protein, then carbs
+      (this order can significantly reduce blood sugar spikes).
+      How many glasses of water so far?
+
+  - name: "Health: Post-lunch walk"
+    schedule: "50 12 * * *"
+    tz: YOUR_TIMEZONE
+    message: >
+      A 10-min walk now can lower post-meal blood sugar spikes
+      by 30-50%. Even a short stroll helps!
+
+  - name: "Health: Afternoon check"
+    schedule: "30 15 * * *"
+    tz: YOUR_TIMEZONE
+    message: >
+      Afternoon check! How's the water count?
+      Grab some almonds or an apple for a healthy snack.
+
+  - name: "Health: Workout reminder"
+    schedule: "0 17 * * *"
+    tz: YOUR_TIMEZONE
+    message: >
+      Time for today's session! Mon/Wed/Fri = strength workout,
+      Tue/Thu = yoga, Sat = active recreation, Sun = gentle yoga/rest.
+
+  - name: "Health: Post-dinner walk"
+    schedule: "0 19 * * *"
+    tz: YOUR_TIMEZONE
+    message: >
+      Dinner done? Time for your post-dinner walk — the most
+      important walk of the day for blood sugar. Even 10 min counts!
+
+  - name: "Health: Evening check-in"
+    schedule: "30 21 * * *"
+    tz: YOUR_TIMEZONE
+    message: >
+      Evening check-in! Quick recap of today:
+      Water glasses? Veggies at meals? Nuts? Walks?
+      Workout or yoga? Breathing exercises?
+      Reply with whatever you did — I'll log it all!
+
+  - name: "Health: Weekly summary"
+    schedule: "0 20 * * 0"
+    tz: YOUR_TIMEZONE
+    message: >
+      Sunday weekly health summary — read ~/health_data.json
+      for the past 7 days. Calculate completion %, streak days,
+      most/least completed habits. Send a motivating summary
+      with one specific suggestion for next week.
