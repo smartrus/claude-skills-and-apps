@@ -19,7 +19,9 @@ Open http://localhost:8777 in your browser. On first launch, you'll see the onbo
 
 ## Step 2: Configure Your Habits
 
-The dashboard tracks 16 default habits across nutrition, exercise, and lifestyle. You can toggle them directly in the browser. The data is saved to `data/health_data.json`.
+The dashboard tracks 16 default habits across nutrition, exercise, and lifestyle. You can toggle them directly in the browser. In standalone mode, the dashboard saves progress to the browser's localStorage.
+
+When running with the sync server (`health_server.py`), AI agents write to `data/health_data.json` via the `/checkin` API, and you can view that data through the dashboard's `/data` endpoint.
 
 To customize which habits are tracked, edit `skill/SKILL.md` and update the habit ID mappings.
 

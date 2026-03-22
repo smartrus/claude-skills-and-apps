@@ -43,20 +43,27 @@ if [ ! -f "$DATA_FILE" ]; then
 fi
 
 # Update the JSON file using Python (stdlib only, no dependencies)
-python3 << PYEOF
+# Pass values via sys.argv to prevent code injection
+python3 - "$DATE" "$HABIT_ID" "$VALUE" "$DATA_FILE" << 'PYEOF'
 import json
 import sys
 import os
 
-date = "$DATE"
-habit_id = "$HABIT_ID"
-value = """$VALUE"""
-data_file = "$DATA_FILE"
+date, habit_id, value, data_file = sys.argv[1:5]
 
 try:
     with open(data_file, "r") as f:
         data = json.load(f)
-except (json.JSONDecodeError, FileNotFoundError):
+except json.JSONDecodeError:
+    # Backup corrupted file before resetting
+    backup_path = data_file + ".bak"
+    try:
+        os.replace(data_file, backup_path)
+        print(f"Warning: Corrupted JSON backed up to {backup_path}")
+    except OSError:
+        pass
+    data = {}
+except FileNotFoundError:
     data = {}
 
 # Initialize day entry if needed
@@ -89,20 +96,23 @@ else:
     status = "done" if is_true else "not done"
     print(f"Habit {habit_id} set to {status}")
 
+# Derive l1 from water count (l1 = met water goal)
+water_goal = 8
+day["habits"]["l1"] = day["water"] >= water_goal
+
 # Write back
 with open(data_file, "w") as f:
     json.dump(data, f, indent=2, ensure_ascii=False)
 
-# Calculate today's progress
+# Calculate today's progress — l1 is derived from water, included in count
 all_habit_ids = [
     "n1", "n2", "n3", "n4", "n5", "n6", "n7",
     "e1", "e2", "e3", "e4",
     "l1", "l2", "l3", "l4", "l5"
 ]
 done_count = sum(1 for h in all_habit_ids if day["habits"].get(h, False))
-water_done = 1 if day["water"] >= 8 else 0
-total = len(all_habit_ids) + 1  # +1 for water goal
-progress = (done_count + water_done) / total * 100
+total = len(all_habit_ids)
+progress = done_count / total * 100 if total > 0 else 0
 
-print(f"Today's progress: {done_count + water_done}/{total} ({progress:.0f}%)")
+print(f"Today's progress: {done_count}/{total} ({progress:.0f}%)")
 PYEOF
