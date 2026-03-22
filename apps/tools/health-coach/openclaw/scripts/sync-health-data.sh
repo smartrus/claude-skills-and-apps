@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # sync-health-data.sh — Pull/push health_data.json from your OpenClaw server
 #
 # Usage:
@@ -16,17 +16,21 @@ set -euo pipefail
 
 # ── Configuration ────────────────────────────────────────────────
 # Replace these with your actual values
-SERVER_SSH="ssh -o ConnectTimeout=10 -o BatchMode=yes -i $HOME/.ssh/YOUR_SSH_KEY root@YOUR_SERVER_IP"
+SSH_KEY="$HOME/.ssh/YOUR_SSH_KEY"
+SSH_HOST="root@YOUR_SERVER_IP"
 CONTAINER_NAME="openclaw-gateway"           # Docker container name filter
 CONTAINER_FILE="/home/node/health_data.json" # Path inside the container
 LOCAL_FILE="$HOME/health-coach/data/health_data.json"
 # ─────────────────────────────────────────────────────────────────
 
+# SSH as an array to safely handle paths with spaces
+SERVER_SSH=(ssh -o ConnectTimeout=10 -o BatchMode=yes -i "$SSH_KEY" "$SSH_HOST")
+
 mkdir -p "$(dirname "$LOCAL_FILE")"
 
 # Find the running container
 get_container_id() {
-    $SERVER_SSH "docker ps --filter name=$CONTAINER_NAME -q"
+    "${SERVER_SSH[@]}" "docker ps --filter name='${CONTAINER_NAME}' -q"
 }
 
 if [ "${1:-}" = "--push" ]; then
@@ -40,7 +44,7 @@ if [ "${1:-}" = "--push" ]; then
         echo "Error: Container '$CONTAINER_NAME' not running on server"
         exit 1
     fi
-    cat "$LOCAL_FILE" | $SERVER_SSH "docker exec -i $CONTAINER bash -c 'cat > $CONTAINER_FILE'"
+    cat "$LOCAL_FILE" | "${SERVER_SSH[@]}" "docker exec -i '$CONTAINER' bash -c 'cat > \"$CONTAINER_FILE\"'"
     echo "✅ Pushed $(wc -c < "$LOCAL_FILE" | tr -d ' ') bytes to server"
 else
     echo "⬇️  Pulling server → local..."
@@ -49,7 +53,7 @@ else
         echo "Error: Container '$CONTAINER_NAME' not running on server"
         exit 1
     fi
-    REMOTE_DATA=$($SERVER_SSH "docker exec $CONTAINER cat $CONTAINER_FILE 2>/dev/null || echo '{}'")
+    REMOTE_DATA=$("${SERVER_SSH[@]}" "docker exec '$CONTAINER' cat '$CONTAINER_FILE' 2>/dev/null || echo '{}'")
 
     # Validate JSON before writing
     if echo "$REMOTE_DATA" | python3 -m json.tool > /dev/null 2>&1; then

@@ -140,10 +140,20 @@ class HealthHandler(SimpleHTTPRequestHandler):
             return
 
         if self.path == "/data":
+            if not isinstance(payload, dict):
+                self._send_json(
+                    {"error": "Invalid payload; expected JSON object"}, 400
+                )
+                return
             self._write_data(payload)
             self._send_json({"ok": True})
 
         elif self.path == "/checkin":
+            if not isinstance(payload, dict):
+                self._send_json(
+                    {"error": "Invalid payload; expected JSON object"}, 400
+                )
+                return
             date = payload.get("date")
             habit_id = payload.get("habit_id")
             value = payload.get("value")
