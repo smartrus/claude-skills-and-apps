@@ -23,7 +23,12 @@ The dashboard tracks 16 default habits across nutrition, exercise, and lifestyle
 
 When running with the sync server (`health_server.py`), AI agents write to `data/health_data.json` via the `/checkin` API. The dashboard automatically merges server data on load, so agent check-ins appear alongside your manual toggles. You can also view the raw JSON directly via the `/data` endpoint in your browser.
 
-To customize which habits are tracked, edit `skill/SKILL.md` and update the habit ID mappings.
+To customize which habits are tracked end-to-end:
+
+- The dashboard's habit IDs, labels, and descriptions are defined in `dashboard/index.html`.
+- The skill's natural-language mappings to those habit IDs live in `skill/SKILL.md`.
+
+If you add, remove, or rename habits, make sure the IDs stay consistent between `dashboard/index.html` and `skill/SKILL.md` so the UI, data file, and agent behavior remain in sync.
 
 ## Step 3: AI Agent Integration (Optional)
 

@@ -18,6 +18,7 @@ Endpoints:
 
 import json
 import os
+import re
 import argparse
 from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
@@ -161,6 +162,14 @@ class HealthHandler(SimpleHTTPRequestHandler):
             if not all([date, habit_id, value is not None]):
                 self._send_json(
                     {"error": "Missing required fields: date, habit_id, value"}, 400
+                )
+                return
+
+            if not isinstance(date, str) or not re.match(
+                r"^\d{4}-\d{2}-\d{2}$", date
+            ):
+                self._send_json(
+                    {"error": "Invalid date format; expected YYYY-MM-DD"}, 400
                 )
                 return
 

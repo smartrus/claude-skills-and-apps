@@ -63,7 +63,7 @@ The cron schedule in `crons/health-reminders.yaml` sends reminders throughout th
 
 Every Sunday evening, review the past 7 days of data from the health data file. Calculate:
 - Average daily completion percentage
-- Streak days (consecutive days with >50% completion)
+- Streak days (consecutive days with ≥80% completion)
 - Most and least completed habits
 - Water intake trend
 

@@ -308,7 +308,13 @@
     cursor: pointer;
   }
 
-  .habit-item:hover { background: rgba(255,255,255,0.06); }
+  .habit-item:not(.derived):hover { background: rgba(255,255,255,0.06); }
+
+  .habit-item.derived {
+    cursor: default;
+    opacity: 0.6;
+    pointer-events: none;
+  }
 
   .habit-item.checked {
     background: rgba(74, 222, 128, 0.08);
@@ -1590,11 +1596,11 @@ function updateRing(type, completed, total) {
   circle.style.strokeDashoffset = offset;
 }
 
-function updateDateDisplay() {
+async function updateDateDisplay() {
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   document.getElementById('currentDate').textContent = currentDate.toLocaleDateString('en-US', options);
   initializeProgress();
-  syncFromServer(getDateKey());
+  await syncFromServer(getDateKey());
   renderHabits();
   renderWaterTracker();
   updateProgress();

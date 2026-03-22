@@ -69,7 +69,7 @@ Evening recap:
 | e2 | Post-lunch walk | "walked after lunch" |
 | e3 | Post-dinner walk | "evening walk" |
 | e4 | Workout / yoga | "did yoga", "gym", "home workout" |
-| l1 | Met water goal (8) | Infer from water count |
+| l1 | Met water goal | Derived: set true when water ≥ 8 (hardcoded in exec template; adjust if user's goal differs) |
 | l2 | Lemon water AM | "lemon water", "warm water this morning" |
 | l3 | Breathing exercise | "breathing", "meditation" |
 | l4 | Slept 7+ hours | "slept 8 hours", "good sleep" |
