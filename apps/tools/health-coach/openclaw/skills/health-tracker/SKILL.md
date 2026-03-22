@@ -24,9 +24,14 @@ if os.path.exists(f):
 date=sys.argv[1]
 day=data.setdefault(date,{'habits':{},'water':0,'notes':''})
 for k,v in (p.split('=',1) for p in sys.argv[2:]):
-  if k=='water': day['water']=max(day['water'],int(v))
+  if k=='water':
+    day['water']=max(day['water'],int(v))
+    if day['water']>=8: day['habits']['l1']=True
   elif k=='notes': day['notes']=(day['notes']+' | '+v).strip(' | ')
-  else: day['habits'][k]=v.lower() in ('true','1','yes')
+  else:
+    new_val=v.lower() in ('true','1','yes')
+    cur_val=day['habits'].get(k)
+    if new_val or not cur_val: day['habits'][k]=new_val
 with open(f,'w') as fh: json.dump(data,fh,indent=2)
 print('Updated',date,json.dumps(day))
 " "$(date +%Y-%m-%d)" "ARGS_HERE"

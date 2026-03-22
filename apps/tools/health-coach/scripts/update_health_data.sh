@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # update_health_data.sh — Update the health habits JSON data file
 #
 # Usage:
@@ -106,9 +106,17 @@ water_goal = DEFAULT_WATER_GOAL
 try:
     with open(profile_file, "r") as pf:
         profile = json.load(pf)
+    # Prefer explicit top-level keys (backwards-compatible)
     goal = profile.get("waterGoal") or profile.get("water_goal")
     if isinstance(goal, int) and goal > 0:
         water_goal = goal
+    else:
+        # Fall back to documented nested schema: targets.water_glasses
+        targets = profile.get("targets") or {}
+        if isinstance(targets, dict):
+            goal = targets.get("water_glasses")
+            if isinstance(goal, int) and goal > 0:
+                water_goal = goal
 except (OSError, json.JSONDecodeError):
     pass
 day["habits"]["l1"] = day["water"] >= water_goal
