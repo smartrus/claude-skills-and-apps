@@ -173,7 +173,7 @@ All configuration uses environment variables or command-line arguments:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
-| `HEALTH_DATA_FILE` | `./data/health_data.json` | Path to data file |
+| `--data-file` | `./data/health_data.json` | Path to data file |
 | `--port` | `8777` | Server port |
 | `--dashboard-dir` | `./dashboard` | Dashboard directory |
 

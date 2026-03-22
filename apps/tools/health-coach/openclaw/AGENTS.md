@@ -42,7 +42,7 @@ Or read the skill file at `skills/health-tracker/SKILL.md` for the full referenc
 
 Nutrition: n1=veggies first, n2=no sugary drinks, n3=fish/omega-3, n4=leafy greens 2+ meals, n5=eating window 10-12h, n6=low sodium, n7=nuts
 Exercise: e1=morning walk, e2=post-lunch walk, e3=post-dinner walk, e4=workout/yoga
-Lifestyle: l1=8 glasses water, l2=lemon water morning, l3=breathing exercise, l4=slept 7+ hours, l5=no screens before bed
+Lifestyle: l1=water goal met (derived: set true when water ≥ 8; adjust in exec template if user's goal differs), l2=lemon water morning, l3=breathing exercise, l4=slept 7+ hours, l5=no screens before bed
 
 Water is tracked as a number (not boolean). Use the highest number mentioned.
 

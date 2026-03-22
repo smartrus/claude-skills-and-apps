@@ -38,6 +38,19 @@ if ! [[ "$DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
   exit 1
 fi
 
+# Validate habit_id against known set
+VALID_IDS="water notes n1 n2 n3 n4 n5 n6 n7 e1 e2 e3 e4 l1 l2 l3 l4 l5"
+if ! echo "$VALID_IDS" | tr ' ' '\n' | grep -qx "$HABIT_ID"; then
+  echo "Error: Unknown habit_id '$HABIT_ID'. Valid IDs: $VALID_IDS" >&2
+  exit 1
+fi
+
+# Reject manual l1 updates (it's derived from water count)
+if [ "$HABIT_ID" = "l1" ]; then
+  echo "Warning: l1 is derived from water count and should not be set manually. Ignoring." >&2
+  exit 0
+fi
+
 # Create data directory and file if they don't exist
 mkdir -p "$DATA_DIR"
 if [ ! -f "$DATA_FILE" ]; then

@@ -28,15 +28,36 @@ SERVER_SSH=(ssh -o ConnectTimeout=10 -o BatchMode=yes -i "$SSH_KEY" "$SSH_HOST")
 
 mkdir -p "$(dirname "$LOCAL_FILE")"
 
-# Find the running container
+# Find the running container (errors if multiple match)
 get_container_id() {
-    "${SERVER_SSH[@]}" "docker ps --filter name='${CONTAINER_NAME}' -q"
+    local ids count
+    ids=$("${SERVER_SSH[@]}" "docker ps --filter name='${CONTAINER_NAME}' -q")
+
+    if [ -z "$ids" ]; then
+        echo ""
+        return 0
+    fi
+
+    count=$(printf '%s\n' "$ids" | sed '/^$/d' | wc -l | tr -d ' ')
+
+    if [ "$count" -gt 1 ]; then
+        echo "Error: Multiple containers match name filter '$CONTAINER_NAME' on server" >&2
+        printf '%s\n' "$ids" >&2
+        return 1
+    fi
+
+    printf '%s\n' "$ids" | sed '/^$/d' | head -n 1
 }
 
 if [ "${1:-}" = "--push" ]; then
     echo "⬆️  Pushing local → server..."
     if [ ! -f "$LOCAL_FILE" ]; then
         echo "Error: $LOCAL_FILE not found"
+        exit 1
+    fi
+    # Validate local JSON before pushing to avoid corrupting server copy
+    if ! python3 -m json.tool "$LOCAL_FILE" > /dev/null 2>&1; then
+        echo "Error: $LOCAL_FILE contains invalid JSON, aborting push"
         exit 1
     fi
     CONTAINER=$(get_container_id)
