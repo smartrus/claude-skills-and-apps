@@ -12,7 +12,23 @@ Both steps are required. Memory keeps your conversational context. The JSON file
 Call the exec tool with this Python command (replace the arguments based on what the user reported):
 
 ```
-exec command: python3 -c "import json,os,sys;f=os.path.expanduser('~/health_data.json');data=json.load(open(f)) if os.path.exists(f) else {};date=sys.argv[1];day=data.setdefault(date,{'habits':{},'water':0,'notes':''});[day.update({'water':max(day['water'],int(v))}) if k=='water' else day.update({'notes':(day['notes']+' | '+v).strip(' | ')}) if k=='notes' else day['habits'].update({k:v.lower() in ('true','1','yes')}) for k,v in (p.split('=',1) for p in sys.argv[2:])];json.dump(data,open(f,'w'),indent=2);print('Updated',date,json.dumps(day))" "$(date +%Y-%m-%d)" "n3=true" "e2=true" "water=7" "notes=Salmon for lunch"
+exec command: python3 -c "
+import json,os,sys
+f=os.path.expanduser('~/health_data.json')
+data={}
+if os.path.exists(f):
+  try:
+    with open(f) as fh: data=json.load(fh)
+  except (json.JSONDecodeError,ValueError): data={}
+date=sys.argv[1]
+day=data.setdefault(date,{'habits':{},'water':0,'notes':''})
+for k,v in (p.split('=',1) for p in sys.argv[2:]):
+  if k=='water': day['water']=max(day['water'],int(v))
+  elif k=='notes': day['notes']=(day['notes']+' | '+v).strip(' | ')
+  else: day['habits'][k]=v.lower() in ('true','1','yes')
+with open(f,'w') as fh: json.dump(data,fh,indent=2)
+print('Updated',date,json.dumps(day))
+" "$(date +%Y-%m-%d)" "n3=true" "e2=true" "water=7" "notes=Salmon for lunch"
 ```
 
 Or read the skill file at `skills/health-tracker/SKILL.md` for the full reference with copy-paste examples.

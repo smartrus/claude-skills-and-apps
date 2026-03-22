@@ -1253,11 +1253,41 @@ function initializeApp() {
   } else {
     updateHeader();
     initializeProgress();
-    renderHabits();
-    renderWaterTracker();
-    renderStreak();
-    updateProgress();
-    updateDateDisplay();
+    // Try to merge server data (from agent check-ins) into local state
+    syncFromServer().then(() => {
+      renderHabits();
+      renderWaterTracker();
+      renderStreak();
+      updateProgress();
+      updateDateDisplay();
+    });
+  }
+}
+
+// ===== SERVER SYNC =====
+async function syncFromServer() {
+  try {
+    const res = await fetch('/data');
+    if (!res.ok) return;
+    const serverData = await res.json();
+    const today = getDateKey();
+    const dayData = serverData[today];
+    if (!dayData) return;
+
+    // Merge server data into localStorage progress (server wins for additive)
+    if (dayData.habits) {
+      for (const [id, val] of Object.entries(dayData.habits)) {
+        if (val) habitProgress[id] = true;  // additive: only set true
+      }
+    }
+    if (typeof dayData.water === 'number' && dayData.water > (habitProgress.water || 0)) {
+      habitProgress.water = dayData.water;
+      const waterGoal = userProfile.waterGoal || 8;
+      habitProgress.l1 = habitProgress.water >= waterGoal;
+    }
+    saveProgress();
+  } catch (e) {
+    // Server not running — dashboard works standalone via localStorage
   }
 }
 
@@ -1428,12 +1458,14 @@ function renderHabits() {
     container.innerHTML = habits.map(habit => {
       const checked = habitProgress[habit.id] ? 'checked' : '';
       const derived = habit.derived ? ' derived' : '';
-      const disabled = habit.derived ? ' disabled title="Derived from water count"' : '';
+      const interactiveAttrs = habit.derived
+        ? ` aria-disabled="true" title="Derived from water count"`
+        : ` role="button" tabindex="0"
+             onclick="toggleHabit('${habit.id}')"
+             onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleHabit('${habit.id}')}"`;
       return `
-        <div class="habit-item ${checked}${derived}" role="button" tabindex="0"
-             onclick="${habit.derived ? '' : `toggleHabit('${habit.id}')`}"
-             onkeydown="${habit.derived ? '' : `if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleHabit('${habit.id}')}`}"
-             aria-label="${habit.label}: ${checked ? 'done' : 'not done'}"${disabled}>
+        <div class="habit-item ${checked}${derived}"${interactiveAttrs}
+             aria-label="${habit.label}: ${checked ? 'done' : 'not done'}">
           <div class="habit-check"></div>
           <div class="habit-text">
             <div class="label">${habit.label}</div>
@@ -1556,11 +1588,23 @@ function switchTab(tabName, evt) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
 
-  document.getElementById(`tab-${tabName}`).classList.add('active');
+  const activeContent = document.getElementById(`tab-${tabName}`);
+  if (!activeContent) return;
+  activeContent.classList.add('active');
 
   // Find the clicked tab button
+  let btn = null;
   const src = evt || window.event;
-  const btn = src ? (src.currentTarget || src.target) : document.querySelector(`.tab[data-tab="${tabName}"]`);
+  if (src && (src.currentTarget || src.target)) {
+    btn = src.currentTarget || src.target;
+  }
+  // Fallback: match tab-content index to tab button index
+  if (!btn) {
+    const contents = Array.from(document.querySelectorAll('.tab-content'));
+    const tabs = Array.from(document.querySelectorAll('.tab'));
+    const idx = contents.indexOf(activeContent);
+    if (idx !== -1 && tabs[idx]) btn = tabs[idx];
+  }
   if (btn && btn.classList) btn.classList.add('active');
 }
 

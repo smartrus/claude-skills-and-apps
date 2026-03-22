@@ -92,12 +92,25 @@ elif habit_id == "notes":
     print(f"Note added: {value}")
 else:
     is_true = value.lower() in ("true", "1", "yes", "done")
-    day["habits"][habit_id] = is_true
-    status = "done" if is_true else "not done"
-    print(f"Habit {habit_id} set to {status}")
+    # Additive logging: once a habit is true, don't overwrite with false
+    previous = day["habits"].get(habit_id, False)
+    if is_true or not previous:
+        day["habits"][habit_id] = is_true
+    status = "done" if day["habits"].get(habit_id, False) else "not done"
+    print(f"Habit {habit_id} is {status}")
 
-# Derive l1 from water count (l1 = met water goal)
-water_goal = 8
+# Derive l1 from water count (read goal from user profile if available)
+DEFAULT_WATER_GOAL = 8
+profile_file = os.path.join(os.path.dirname(data_file), "user_profile.json")
+water_goal = DEFAULT_WATER_GOAL
+try:
+    with open(profile_file, "r") as pf:
+        profile = json.load(pf)
+    goal = profile.get("waterGoal") or profile.get("water_goal")
+    if isinstance(goal, int) and goal > 0:
+        water_goal = goal
+except (OSError, json.JSONDecodeError):
+    pass
 day["habits"]["l1"] = day["water"] >= water_goal
 
 # Write back
