@@ -1,0 +1,54 @@
+name: Enforce PR Target Branch
+
+on:
+  pull_request:
+    types: [opened, reopened, edited]
+    branches: [main]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  enforce:
+    name: Block PRs to main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close PR and comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+
+            // Allow PRs from dev to main (release merges)
+            if (pr.head.ref === 'dev') {
+              console.log('PR from dev to main is allowed.');
+              return;
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              body: `## ⛔ PR Target Branch Error
+
+            This PR targets \`main\`, but all feature PRs must target the \`dev\` branch.
+
+            Please close this PR and reopen it targeting \`dev\`:
+
+            \`\`\`bash
+            git checkout dev
+            git checkout -b ${pr.head.ref}
+            # ... then open a new PR targeting dev
+            \`\`\`
+
+            Only the \`dev\` branch is merged into \`main\` during releases. See [CONTRIBUTING.md](../blob/dev/CONTRIBUTING.md) for details.`
+            });
+
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              state: 'closed'
+            });
+
+            core.setFailed('PRs must target the dev branch, not main.');

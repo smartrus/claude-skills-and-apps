@@ -1,0 +1,52 @@
+name: New App Proposal
+description: Propose a new app, dashboard, or tool
+title: "[App] "
+labels: ["app", "proposal"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: App Name
+      placeholder: e.g., sales-pipeline-dashboard
+    validations:
+      required: true
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: Category
+      options:
+        - dashboards
+        - tools
+        - automations
+        - other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What does this app do? Who is the target user?
+      placeholder: Describe the app's purpose and audience...
+    validations:
+      required: true
+
+  - type: textarea
+    id: tech
+    attributes:
+      label: Tech Stack
+      description: What technologies or dependencies does it use?
+      placeholder: |
+        - HTML/CSS/JS (no build step)
+        - React with Recharts
+        - Python CLI tool
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Contribution Checklist
+      options:
+        - label: I've checked that no existing app covers this use case
+        - label: I'm willing to implement this app
+        - label: I've read CONTRIBUTING.md

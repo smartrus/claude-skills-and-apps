@@ -1,0 +1,33 @@
+# CODEOWNERS — auto-assign reviewers on PRs
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# Each line is a file pattern followed by one or more owners.
+# Order matters — later rules override earlier ones.
+# Owners are requested for review when a PR touches matching files.
+
+# ── Default: you review everything ──────────────────────────────
+*                                   @smartrus
+
+# ── CI / GitHub Actions ─────────────────────────────────────────
+.github/                            @smartrus
+
+# ── Skills by domain (add co-maintainers as the community grows)
+skills/engineering/                  @smartrus
+skills/marketing/                    @smartrus
+skills/product/                      @smartrus
+skills/operations/                   @smartrus
+skills/data/                         @smartrus
+skills/design/                       @smartrus
+
+# ── Apps by category ────────────────────────────────────────────
+apps/dashboards/                     @smartrus
+apps/tools/                          @smartrus
+apps/automations/                    @smartrus
+
+# ── Scripts & tooling ───────────────────────────────────────────
+scripts/                             @smartrus
+
+# ── Documentation ───────────────────────────────────────────────
+docs/                                @smartrus
+mkdocs.yml                           @smartrus
+*.md                                 @smartrus

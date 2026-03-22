@@ -1,0 +1,60 @@
+name: New Skill Proposal
+description: Propose a new skill for the collection
+title: "[Skill] "
+labels: ["skill", "proposal"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Skill Name
+      placeholder: e.g., pr-review-expert
+    validations:
+      required: true
+
+  - type: dropdown
+    id: domain
+    attributes:
+      label: Domain
+      options:
+        - engineering
+        - marketing
+        - product
+        - operations
+        - data
+        - design
+        - other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What does this skill do? What problem does it solve?
+      placeholder: Describe the skill's purpose and target use case...
+    validations:
+      required: true
+
+  - type: textarea
+    id: triggers
+    attributes:
+      label: Trigger Phrases
+      description: What phrases or keywords should activate this skill?
+      placeholder: |
+        - "review this PR"
+        - "check my code"
+
+  - type: textarea
+    id: existing
+    attributes:
+      label: Existing Alternatives
+      description: Are there existing skills that partially cover this? How is yours different?
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Contribution Checklist
+      options:
+        - label: I've checked that no existing skill covers this use case
+        - label: I'm willing to implement this skill
+        - label: I've read CONTRIBUTING.md

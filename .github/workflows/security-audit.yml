@@ -1,0 +1,87 @@
+name: Security Audit
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'skills/**/scripts/**'
+      - 'apps/**/src/**'
+      - '**.py'
+      - '**.sh'
+      - '**.js'
+      - '**.ts'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  security-scan:
+    name: Scan for Security Issues
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install security tools
+        run: pip install bandit semgrep
+
+      - name: Run Bandit (Python security linter)
+        if: hashFiles('**/*.py') != ''
+        run: |
+          echo "Running Bandit security scan on Python files..."
+          find . -name '*.py' -not -path './.git/*' -not -path './node_modules/*' | head -100 | xargs bandit -r -ll --format json --output bandit-report.json || true
+          if [ -f bandit-report.json ]; then
+            python -c "
+          import json, sys
+          with open('bandit-report.json') as f:
+              data = json.load(f)
+          results = data.get('results', [])
+          if results:
+              print(f'::warning::Bandit found {len(results)} issue(s)')
+              for r in results:
+                  print(f\"::warning file={r['filename']},line={r['line_number']}::{r['issue_severity']}: {r['issue_text']}\")
+          else:
+              print('Bandit scan clean.')
+          "
+          fi
+
+      - name: Check for dangerous patterns
+        run: |
+          echo "Checking for dangerous code patterns..."
+          DANGEROUS_PATTERNS=(
+            'eval\s*\('
+            'exec\s*\('
+            'subprocess\.call.*shell=True'
+            'os\.system\s*\('
+            '__import__\s*\('
+            'pickle\.loads'
+            'yaml\.load\s*\([^,]*\)$'
+          )
+
+          FOUND=0
+          for pattern in "${DANGEROUS_PATTERNS[@]}"; do
+            if grep -rPn "$pattern" --include='*.py' --include='*.js' --include='*.ts' . 2>/dev/null; then
+              echo "::warning::Found potentially dangerous pattern: $pattern"
+              FOUND=1
+            fi
+          done
+
+          if [ $FOUND -eq 1 ]; then
+            echo "::warning::Dangerous patterns detected. Please review carefully."
+          else
+            echo "No dangerous patterns found."
+          fi
+
+      - name: Check script permissions
+        run: |
+          echo "Checking for overly permissive scripts..."
+          find . -name '*.sh' -not -path './.git/*' | while read f; do
+            if head -1 "$f" | grep -q 'sudo\|chmod 777\|chmod a+rwx'; then
+              echo "::error file=$f::Script requests elevated permissions"
+            fi
+          done

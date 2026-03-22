@@ -1,0 +1,48 @@
+site_name: Claude Skills & Apps
+site_url: https://smartrus.github.io/claude-skills-and-apps/
+site_description: A curated collection of production-ready skills and apps for Claude
+site_author: Rustem Abdrakhmanov
+repo_url: https://github.com/smartrus/claude-skills-and-apps
+repo_name: smartrus/claude-skills-and-apps
+
+theme:
+  name: material
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.sections
+    - navigation.expand
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - tables
+  - toc:
+      permalink: true
+
+nav:
+  - Home: index.md
+  - Skills: skills.md
+  - Apps: apps.md
+  - Contributing: contributing.md

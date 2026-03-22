@@ -1,0 +1,60 @@
+name: Lint Skills & Apps
+
+on:
+  pull_request:
+    branches: [dev]
+    paths:
+      - 'skills/**'
+      - 'apps/**'
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint Changed Files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed
+        run: |
+          CHANGED=$(git diff --name-only origin/dev...HEAD -- 'skills/' 'apps/' | tr '\n' ' ')
+          echo "files=$CHANGED" >> $GITHUB_OUTPUT
+          echo "Changed files: $CHANGED"
+
+      - name: Lint markdown files
+        if: steps.changed.outputs.files != ''
+        run: |
+          echo "Linting changed markdown files..."
+          for file in ${{ steps.changed.outputs.files }}; do
+            if [[ "$file" == *.md ]]; then
+              echo "Checking: $file"
+
+              # Check file is not empty
+              if [ ! -s "$file" ]; then
+                echo "::error file=$file::File is empty"
+                exit 1
+              fi
+
+              # Check for YAML frontmatter in SKILL.md files
+              if [[ "$(basename "$file")" == "SKILL.md" ]]; then
+                if ! head -1 "$file" | grep -q '^---$'; then
+                  echo "::error file=$file::SKILL.md must start with YAML frontmatter (---)"
+                  exit 1
+                fi
+              fi
+            fi
+          done
+          echo "All changed files pass lint."
+
+      - name: Check for large files
+        run: |
+          echo "Checking for oversized files..."
+          find skills/ apps/ -type f -size +1M -not -name '*.png' -not -name '*.jpg' -not -name '*.gif' | while read f; do
+            SIZE=$(du -h "$f" | cut -f1)
+            echo "::warning file=$f::Large file detected ($SIZE). Consider reducing size."
+          done

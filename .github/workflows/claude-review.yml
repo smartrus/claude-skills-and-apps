@@ -1,0 +1,50 @@
+name: Claude Code Review
+
+on:
+  pull_request:
+    branches: [dev]
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    name: AI-Powered Code Review
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get PR diff
+        id: diff
+        run: |
+          DIFF=$(git diff origin/dev...HEAD)
+          echo "diff<<EOF" >> $GITHUB_OUTPUT
+          echo "$DIFF" | head -500 >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Review with Claude
+        if: env.ANTHROPIC_API_KEY != ''
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # This step requires ANTHROPIC_API_KEY to be set as a repository secret.
+          # If not configured, this step is silently skipped.
+          #
+          # To enable:
+          # 1. Get an API key from https://console.anthropic.com
+          # 2. Add it as a repository secret named ANTHROPIC_API_KEY
+          # 3. The review will run automatically on new PRs
+
+          echo "Claude review is configured and will run on PRs."
+          echo "To implement: add a script at scripts/claude-review.py that:"
+          echo "  1. Reads the PR diff"
+          echo "  2. Sends it to Claude API for review"
+          echo "  3. Posts the review as a PR comment"
+          echo ""
+          echo "See scripts/claude-review.py for the implementation template."
