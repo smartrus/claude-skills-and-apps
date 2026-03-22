@@ -744,7 +744,7 @@
     <h1>Personal Health Dashboard</h1>
     <p id="headerGreeting">Your personalized wellness tracker</p>
     <p id="syncStatus" style="font-size:0.8rem; margin-top:6px;"></p>
-    <div class="settings-icon" onclick="openSettings()" title="Edit profile">⚙️</div>
+    <button type="button" class="settings-icon" onclick="openSettings()" title="Edit profile" aria-label="Edit profile">⚙️</button>
   </header>
 
   <div class="date-nav">
@@ -1265,13 +1265,13 @@ function initializeApp() {
 }
 
 // ===== SERVER SYNC =====
-async function syncFromServer() {
+async function syncFromServer(dateKey) {
   try {
     const res = await fetch('/data');
     if (!res.ok) return;
     const serverData = await res.json();
-    const today = getDateKey();
-    const dayData = serverData[today];
+    const key = dateKey || getDateKey();
+    const dayData = serverData[key];
     if (!dayData) return;
 
     // Merge server data into localStorage progress (server wins for additive)
@@ -1282,7 +1282,7 @@ async function syncFromServer() {
     }
     if (typeof dayData.water === 'number' && dayData.water > (habitProgress.water || 0)) {
       habitProgress.water = dayData.water;
-      const waterGoal = userProfile.waterGoal || 8;
+      const waterGoal = (userProfile && userProfile.waterGoal) || 8;
       habitProgress.l1 = habitProgress.water >= waterGoal;
     }
     saveProgress();
@@ -1294,7 +1294,14 @@ async function syncFromServer() {
 function loadUserProfile() {
   const saved = localStorage.getItem('userProfile');
   if (saved) {
-    userProfile = JSON.parse(saved);
+    try {
+      userProfile = JSON.parse(saved);
+    } catch (e) {
+      localStorage.removeItem('userProfile');
+      userProfile = null;
+    }
+  } else {
+    userProfile = null;
   }
 }
 
@@ -1316,8 +1323,9 @@ function openSettings() {
   document.getElementById('settingsWaterGoal').value = userProfile.waterGoal || 8;
   document.getElementById('settingsSleepGoal').value = userProfile.sleepGoal || 7.5;
   
+  const goals = Array.isArray(userProfile && userProfile.goals) ? userProfile.goals : [];
   document.querySelectorAll('#settingsForm input[name="goals"]').forEach(cb => {
-    cb.checked = userProfile.goals.includes(cb.value);
+    cb.checked = goals.includes(cb.value);
   });
   
   document.getElementById('settingsModal').classList.add('active');
@@ -1403,20 +1411,32 @@ const lifestyleHabits = [
 ];
 
 // ===== PROGRESS TRACKING =====
+function createEmptyHabitProgress() {
+  const progress = { water: 0 };
+  [...nutritionHabits, ...exerciseHabits, ...lifestyleHabits].forEach(h => {
+    progress[h.id] = false;
+  });
+  return progress;
+}
+
 function initializeProgress() {
   const today = getDateKey();
   const saved = localStorage.getItem(`progress-${today}`);
   if (saved) {
-    habitProgress = JSON.parse(saved);
-    // Ensure water is a number (migration from old format)
-    if (typeof habitProgress.water !== 'number') {
-      habitProgress.water = 0;
+    try {
+      const parsed = JSON.parse(saved);
+      if (typeof parsed !== 'object' || parsed === null) {
+        throw new Error('Invalid progress data');
+      }
+      habitProgress = parsed;
+      if (typeof habitProgress.water !== 'number') {
+        habitProgress.water = 0;
+      }
+    } catch (e) {
+      habitProgress = createEmptyHabitProgress();
     }
   } else {
-    habitProgress = { water: 0 };
-    [...nutritionHabits, ...exerciseHabits, ...lifestyleHabits].forEach(h => {
-      habitProgress[h.id] = false;
-    });
+    habitProgress = createEmptyHabitProgress();
   }
 }
 
@@ -1574,6 +1594,7 @@ function updateDateDisplay() {
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   document.getElementById('currentDate').textContent = currentDate.toLocaleDateString('en-US', options);
   initializeProgress();
+  syncFromServer(getDateKey());
   renderHabits();
   renderWaterTracker();
   updateProgress();

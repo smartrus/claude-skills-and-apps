@@ -28,7 +28,9 @@ fi
 
 DATE="$1"
 HABIT_ID="$2"
-VALUE="$3"
+# Capture all remaining args as VALUE (supports multi-word notes without perfect quoting)
+shift 2
+VALUE="$*"
 
 # Validate date format
 if ! [[ "$DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
