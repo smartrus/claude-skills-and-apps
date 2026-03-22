@@ -1,0 +1,79 @@
+# Health Coach Agent — Channel Bindings & Configuration
+#
+# This file defines how the health coach agent connects to messaging platforms.
+# Adapt this template to your agentic platform (OpenClaw, custom framework, etc.)
+#
+# The agent needs:
+#   1. A messaging channel (WhatsApp, Telegram, Slack, etc.)
+#   2. The system prompt (CLAUDE.md in this directory)
+#   3. Access to the skill (skill/SKILL.md) and scripts (scripts/)
+#   4. Cron scheduling for reminders (crons/health-reminders.yaml)
+
+agent:
+  name: health-coach
+  description: "Personal health habits tracker with daily reminders and natural-language check-ins"
+  model: claude-sonnet-4-6  # or your preferred model
+  system_prompt: ./CLAUDE.md
+
+  # Channel bindings — configure at least one messaging platform
+  # Uncomment and fill in the channels you want to use
+  channels:
+    # WhatsApp
+    # - type: whatsapp
+    #   peer: "your-whatsapp-contact-or-group"
+    #   direction: bidirectional  # agent sends reminders AND receives check-ins
+
+    # Telegram
+    # - type: telegram
+    #   peer: "your-telegram-chat-id-or-bot"
+    #   direction: bidirectional
+
+    # Slack
+    # - type: slack
+    #   channel: "#health-tracking"
+    #   direction: bidirectional
+
+    # SMS (if supported by your platform)
+    # - type: sms
+    #   phone: "+1234567890"
+    #   direction: bidirectional
+
+  # Skills — the agent loads these for parsing check-ins
+  skills:
+    - path: ../skill/SKILL.md
+      name: health-tracker
+
+  # Cron reminders — scheduled messages throughout the day
+  crons:
+    - path: ../crons/health-reminders.yaml
+
+  # Tool access — the agent needs shell access to run the update script
+  tools:
+    - exec  # required for ./scripts/update_health_data.sh
+    - read  # required for reading health_data.json and user_profile.json
+
+  # Data paths
+  data:
+    health_data: ../data/health_data.json
+    user_profile: ../data/user_profile.json
+
+# ---
+# Platform-specific setup instructions:
+#
+# OpenClaw:
+#   openclaw agents add health-coach
+#   openclaw agents config set health-coach system_prompt "$(cat agent/CLAUDE.md)"
+#   cp crons/health-reminders.yaml ~/.openclaw/crons/
+#   cp -r skill/ ~/.openclaw/skills/health-tracker/
+#   # Then configure channel bindings in ~/.openclaw/config.yaml
+#
+# Claude Code / Cowork:
+#   cp agent/CLAUDE.md ~/.claude/CLAUDE.md  # or project-level
+#   cp -r skill/ ~/.claude/skills/health-tracker/
+#   # Crons need an external scheduler (crontab, launchd)
+#
+# Custom Framework:
+#   Load CLAUDE.md as the system prompt
+#   Load skill/SKILL.md into the agent's skill registry
+#   Configure your scheduler to send messages from crons/health-reminders.yaml
+#   Ensure the agent can execute shell commands for data persistence

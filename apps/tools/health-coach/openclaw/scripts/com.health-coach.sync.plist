@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  com.health-coach.sync.plist — macOS LaunchAgent for nightly health data sync
+
+  Setup:
+    1. Edit the path below to point to YOUR sync-health-data.sh location
+    2. Copy to ~/Library/LaunchAgents/
+    3. Load:  launchctl load ~/Library/LaunchAgents/com.health-coach.sync.plist
+    4. Test:  launchctl start com.health-coach.sync
+
+  Manage:
+    Unload: launchctl unload ~/Library/LaunchAgents/com.health-coach.sync.plist
+    Status: launchctl list | grep health-coach
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.health-coach.sync</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <!-- CHANGE THIS: path to your sync-health-data.sh -->
+        <string>/path/to/health-coach/openclaw/scripts/sync-health-data.sh</string>
+    </array>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <!-- Runs daily at 22:30 (10:30 PM). Adjust to your preference. -->
+        <key>Hour</key>
+        <integer>22</integer>
+        <key>Minute</key>
+        <integer>30</integer>
+    </dict>
+    <key>StandardOutPath</key>
+    <!-- CHANGE THIS: path to your log file -->
+    <string>/path/to/health-coach/data/sync.log</string>
+    <key>StandardErrorPath</key>
+    <string>/path/to/health-coach/data/sync.log</string>
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>

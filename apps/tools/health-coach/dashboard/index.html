@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal Health Habits Dashboard</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --card: #1a1d27;
+    --card-hover: #222633;
+    --accent: #4ade80;
+    --accent2: #60a5fa;
+    --accent3: #f59e0b;
+    --accent4: #f472b6;
+    --danger: #ef4444;
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --border: #2d3348;
+    --success: #22c55e;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+  header {
+    text-align: center;
+    padding: 30px 0 10px;
+    position: relative;
+  }
+
+  header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  header p { color: var(--text-dim); margin-top: 6px; font-size: 0.95rem; }
+
+  .settings-icon {
+    position: absolute;
+    top: 30px;
+    right: 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.2s;
+  }
+
+  .settings-icon:hover {
+    background: var(--card-hover);
+    color: var(--accent);
+  }
+
+  .date-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin: 20px 0;
+  }
+
+  .date-nav button {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+  }
+
+  .date-nav button:hover { background: var(--card-hover); }
+  .date-nav .current-date { font-size: 1.1rem; font-weight: 600; min-width: 200px; text-align: center; }
+
+  /* Modal Styles */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.active { display: flex; }
+
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .modal h2 {
+    font-size: 1.5rem;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .modal p {
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    font-size: 0.95rem;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="number"],
+  .form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 0.95rem;
+  }
+
+  .form-group input[type="text"]:focus,
+  .form-group input[type="number"]:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: rgba(255,255,255,0.05);
+  }
+
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .checkbox-item:hover {
+    background: rgba(255,255,255,0.06);
+  }
+
+  .checkbox-item input[type="checkbox"] {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+  }
+
+  .checkbox-item label {
+    margin: 0;
+    cursor: pointer;
+    flex: 1;
+  }
+
+  .modal-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .modal-buttons button {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+  }
+
+  .btn-primary:hover {
+    opacity: 0.9;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .btn-secondary:hover {
+    background: var(--card-hover);
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--card);
+    padding: 4px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    overflow-x: auto;
+  }
+
+  .tab {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .tab.active {
+    background: var(--accent);
+    color: #000;
+    font-weight: 600;
+  }
+
+  .tab:hover:not(.active) { color: var(--text); background: var(--card-hover); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 16px;
+  }
+
+  .card h2 {
+    font-size: 1.15rem;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card h3 {
+    font-size: 0.95rem;
+    color: var(--accent2);
+    margin: 16px 0 10px;
+  }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+
+  @media (max-width: 768px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* Habit Checklist */
+  .habit-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+
+  .habit-item:hover { background: rgba(255,255,255,0.06); }
+
+  .habit-item.checked {
+    background: rgba(74, 222, 128, 0.08);
+  }
+
+  .habit-item.checked .habit-text { text-decoration: line-through; color: var(--text-dim); }
+
+  .habit-check {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .habit-item.checked .habit-check {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .habit-item.checked .habit-check::after {
+    content: '✓';
+    color: #000;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .habit-text { flex: 1; }
+  .habit-text .label { font-weight: 500; font-size: 0.95rem; }
+  .habit-text .desc { font-size: 0.8rem; color: var(--text-dim); margin-top: 2px; }
+
+  .habit-tag {
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .tag-health { background: rgba(244, 114, 182, 0.15); color: var(--accent4); }
+  .tag-nutrition { background: rgba(245, 158, 11, 0.15); color: var(--accent3); }
+  .tag-fitness { background: rgba(96, 165, 250, 0.15); color: var(--accent2); }
+  .tag-wellness { background: rgba(74, 222, 128, 0.15); color: var(--accent); }
+
+  /* Progress Ring */
+  .progress-ring-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+  }
+
+  .progress-ring { position: relative; width: 120px; height: 120px; }
+
+  .progress-ring svg { transform: rotate(-90deg); }
+
+  .progress-ring circle {
+    fill: none;
+    stroke-width: 8;
+    stroke-linecap: round;
+  }
+
+  .progress-ring .bg { stroke: var(--border); }
+  .progress-ring .fg { transition: stroke-dashoffset 0.5s ease; }
+
+  .progress-ring .percent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .progress-label { margin-top: 10px; font-weight: 600; font-size: 0.9rem; }
+
+  /* Meal Cards */
+  .meal-card {
+    background: rgba(255,255,255,0.03);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .meal-card h4 {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .meal-card .meal-name { font-weight: 600; color: var(--accent); }
+  .meal-card .meal-desc { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px; }
+  .meal-card .meal-benefits { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  /* Exercise Cards */
+  .exercise-card {
+    background: rgba(255,255,255,0.03);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .exercise-card h4 { font-size: 0.95rem; margin-bottom: 6px; color: var(--accent); }
+  .exercise-card .duration { font-size: 0.85rem; color: var(--accent3); margin-bottom: 6px; }
+  .exercise-card .details { font-size: 0.85rem; color: var(--text-dim); }
+  .exercise-card ul { margin-left: 16px; margin-top: 6px; }
+  .exercise-card li { font-size: 0.85rem; color: var(--text-dim); margin-bottom: 4px; }
+
+  /* Info Box */
+  .info-box {
+    background: rgba(96, 165, 250, 0.08);
+    border-left: 3px solid var(--accent2);
+    padding: 14px 18px;
+    border-radius: 0 10px 10px 0;
+    margin: 12px 0;
+    font-size: 0.9rem;
+    color: var(--text-dim);
+  }
+
+  .info-box strong { color: var(--text); }
+
+  /* Week streak */
+  .streak-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 16px 0;
+  }
+
+  .streak-day {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--card-hover);
+    border: 1px solid var(--border);
+  }
+
+  .streak-day.done {
+    background: rgba(74, 222, 128, 0.2);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .streak-day.today {
+    border-color: var(--accent2);
+    color: var(--accent2);
+  }
+
+  /* Food list */
+  .food-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .food-item {
+    background: rgba(255,255,255,0.03);
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  .food-item .emoji { font-size: 1.3rem; display: block; margin-bottom: 4px; }
+
+  /* Metric cards */
+  .metric-card {
+    text-align: center;
+    padding: 20px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 12px;
+  }
+
+  .metric-card .value {
+    font-size: 1.8rem;
+    font-weight: 700;
+  }
+
+  .metric-card .unit { font-size: 0.85rem; color: var(--text-dim); }
+  .metric-card .label { font-size: 0.85rem; color: var(--text-dim); margin-top: 4px; }
+
+  .color-green { color: var(--accent); }
+  .color-blue { color: var(--accent2); }
+  .color-amber { color: var(--accent3); }
+  .color-pink { color: var(--accent4); }
+
+  /* Schedule timeline */
+  .timeline-item {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+    padding: 12px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+  }
+
+  .timeline-time {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent2);
+    min-width: 70px;
+    flex-shrink: 0;
+  }
+
+  .timeline-content .title { font-weight: 500; font-size: 0.95rem; }
+  .timeline-content .detail { font-size: 0.8rem; color: var(--text-dim); margin-top: 2px; }
+
+  /* Reset button */
+  .reset-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 6px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    float: right;
+    transition: all 0.2s;
+  }
+
+  .reset-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+  .section-divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
+  }
+
+  /* Water tracker */
+  .water-tracker {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    margin: 12px 0;
+  }
+
+  .water-glass {
+    width: 36px;
+    height: 44px;
+    border-radius: 4px 4px 8px 8px;
+    border: 2px solid var(--border);
+    cursor: pointer;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    transition: all 0.2s;
+  }
+
+  .water-glass.filled {
+    border-color: var(--accent2);
+  }
+
+  .water-glass.filled .water-fill {
+    height: 100%;
+    background: rgba(96, 165, 250, 0.4);
+  }
+
+  .water-fill {
+    width: 100%;
+    height: 0;
+    transition: height 0.3s;
+  }
+
+  .water-count {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent2);
+    min-width: 60px;
+    text-align: center;
+  }
+
+  .editable-field {
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
+  .editable-field:hover {
+    border-color: var(--accent2);
+  }
+</style>
+</head>
+<body>
+
+<!-- Onboarding Modal -->
+<div class="modal-overlay" id="onboardingModal">
+  <div class="modal">
+    <h2>Welcome to Your Health Dashboard</h2>
+    <p>Let's personalize this dashboard for your unique health journey. It takes just a minute!</p>
+
+    <form id="onboardingForm">
+      <div class="form-group">
+        <label>Your Name (optional)</label>
+        <input type="text" id="userName" placeholder="e.g., Alex">
+      </div>
+
+      <div class="form-group">
+        <label>What are your primary health goals?</label>
+        <div class="checkbox-group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="goal-weight" name="goals" value="weight-management">
+            <label for="goal-weight">Weight Management</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="goal-heart" name="goals" value="heart-health">
+            <label for="goal-heart">Heart Health & Blood Pressure</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="goal-sugar" name="goals" value="blood-sugar">
+            <label for="goal-sugar">Blood Sugar Management</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="goal-liver" name="goals" value="liver-health">
+            <label for="goal-liver">Liver Health</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="goal-fitness" name="goals" value="fitness">
+            <label for="goal-fitness">General Fitness</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="goal-wellness" name="goals" value="general-wellness">
+            <label for="goal-wellness">General Wellness</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Target Weight (optional, kg)</label>
+        <input type="number" id="targetWeight" placeholder="e.g., 75" step="0.5">
+      </div>
+
+      <div class="form-group">
+        <label>Daily Water Goal (optional, glasses)</label>
+        <input type="number" id="waterGoal" placeholder="e.g., 8" min="1" max="20">
+      </div>
+
+      <div class="form-group">
+        <label>Sleep Goal (optional, hours)</label>
+        <input type="number" id="sleepGoal" placeholder="e.g., 7.5" min="4" max="12" step="0.5">
+      </div>
+
+      <div class="modal-buttons">
+        <button type="submit" class="btn-primary">Start Using Dashboard</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h2>Update Your Profile</h2>
+    <p>Adjust your health goals and targets anytime.</p>
+
+    <form id="settingsForm">
+      <div class="form-group">
+        <label>Your Name (optional)</label>
+        <input type="text" id="settingsUserName" placeholder="e.g., Alex">
+      </div>
+
+      <div class="form-group">
+        <label>Health Goals</label>
+        <div class="checkbox-group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="settings-goal-weight" name="goals" value="weight-management">
+            <label for="settings-goal-weight">Weight Management</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="settings-goal-heart" name="goals" value="heart-health">
+            <label for="settings-goal-heart">Heart Health & Blood Pressure</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="settings-goal-sugar" name="goals" value="blood-sugar">
+            <label for="settings-goal-sugar">Blood Sugar Management</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="settings-goal-liver" name="goals" value="liver-health">
+            <label for="settings-goal-liver">Liver Health</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="settings-goal-fitness" name="goals" value="fitness">
+            <label for="settings-goal-fitness">General Fitness</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="settings-goal-wellness" name="goals" value="general-wellness">
+            <label for="settings-goal-wellness">General Wellness</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Target Weight (optional, kg)</label>
+        <input type="number" id="settingsTargetWeight" placeholder="e.g., 75" step="0.5">
+      </div>
+
+      <div class="form-group">
+        <label>Daily Water Goal (optional, glasses)</label>
+        <input type="number" id="settingsWaterGoal" placeholder="e.g., 8" min="1" max="20">
+      </div>
+
+      <div class="form-group">
+        <label>Sleep Goal (optional, hours)</label>
+        <input type="number" id="settingsSleepGoal" placeholder="e.g., 7.5" min="4" max="12" step="0.5">
+      </div>
+
+      <div class="modal-buttons">
+        <button type="submit" class="btn-primary">Save Changes</button>
+        <button type="button" class="btn-secondary" onclick="closeSettings()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="container">
+  <header>
+    <h1>Personal Health Dashboard</h1>
+    <p id="headerGreeting">Your personalized wellness tracker</p>
+    <p id="syncStatus" style="font-size:0.8rem; margin-top:6px;"></p>
+    <div class="settings-icon" onclick="openSettings()" title="Edit profile">⚙️</div>
+  </header>
+
+  <div class="date-nav">
+    <button onclick="changeDate(-1)">&larr;</button>
+    <div class="current-date" id="currentDate"></div>
+    <button onclick="changeDate(1)">&rarr;</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('daily')">Today's Habits</button>
+    <button class="tab" onclick="switchTab('nutrition')">Nutrition Guide</button>
+    <button class="tab" onclick="switchTab('exercise')">Exercise Plan</button>
+    <button class="tab" onclick="switchTab('knowledge')">Health Knowledge</button>
+    <button class="tab" onclick="switchTab('schedule')">Daily Schedule</button>
+  </div>
+
+  <!-- ======================== TAB: DAILY HABITS ======================== -->
+  <div class="tab-content active" id="tab-daily">
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <h2>🎯 Daily Progress <button class="reset-btn" onclick="resetDay()">Reset Day</button></h2>
+          <div class="grid-3">
+            <div class="progress-ring-container">
+              <div class="progress-ring" id="ring-overall">
+                <svg width="120" height="120"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg" cx="60" cy="60" r="52" stroke="var(--accent)"/></svg>
+                <div class="percent" id="pct-overall">0%</div>
+              </div>
+              <div class="progress-label">Overall</div>
+            </div>
+            <div class="progress-ring-container">
+              <div class="progress-ring" id="ring-nutrition">
+                <svg width="120" height="120"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg" cx="60" cy="60" r="52" stroke="var(--accent3)"/></svg>
+                <div class="percent" id="pct-nutrition">0%</div>
+              </div>
+              <div class="progress-label">Nutrition</div>
+            </div>
+            <div class="progress-ring-container">
+              <div class="progress-ring" id="ring-exercise">
+                <svg width="120" height="120"><circle class="bg" cx="60" cy="60" r="52"/><circle class="fg" cx="60" cy="60" r="52" stroke="var(--accent2)"/></svg>
+                <div class="percent" id="pct-exercise">0%</div>
+              </div>
+              <div class="progress-label">Exercise</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>💧 Water Intake</h2>
+          <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:12px;">Goal: <span id="waterGoalDisplay">8</span> glasses — essential for overall health and metabolism</p>
+          <div class="water-tracker" id="waterTracker"></div>
+        </div>
+
+        <div class="card">
+          <h2>🔥 Weekly Streak</h2>
+          <div class="streak-row" id="streakRow"></div>
+          <p style="text-align:center; font-size:0.85rem; color:var(--text-dim);" id="streakText">Complete 80%+ of habits to earn a streak day</p>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>🥗 Nutrition Habits</h2>
+          <div id="nutritionHabits"></div>
+        </div>
+
+        <div class="card">
+          <h2>🏃 Exercise Habits</h2>
+          <div id="exerciseHabits"></div>
+        </div>
+
+        <div class="card">
+          <h2>🌙 Lifestyle Habits</h2>
+          <div id="lifestyleHabits"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== TAB: NUTRITION GUIDE ======================== -->
+  <div class="tab-content" id="tab-nutrition">
+    <div class="grid-2">
+      <div class="card">
+        <h2>✅ Whole Foods to Embrace</h2>
+        <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:12px;">These nutrient-dense foods support energy, metabolism, and overall wellness.</p>
+
+        <h3>🥦 Vegetables & Greens</h3>
+        <div class="food-grid">
+          <div class="food-item"><span class="emoji">🥦</span>Broccoli</div>
+          <div class="food-item"><span class="emoji">🥬</span>Spinach</div>
+          <div class="food-item"><span class="emoji">🥕</span>Carrots</div>
+          <div class="food-item"><span class="emoji">🫑</span>Bell Peppers</div>
+          <div class="food-item"><span class="emoji">🍅</span>Tomatoes</div>
+          <div class="food-item"><span class="emoji">🥒</span>Cucumber</div>
+          <div class="food-item"><span class="emoji">🧄</span>Garlic</div>
+          <div class="food-item"><span class="emoji">🍄</span>Mushrooms</div>
+          <div class="food-item"><span class="emoji">🥔</span>Sweet Potato</div>
+          <div class="food-item"><span class="emoji">🥕</span>Beets</div>
+          <div class="food-item"><span class="emoji">🥬</span>Kale</div>
+          <div class="food-item"><span class="emoji">🫒</span>Olive Oil</div>
+        </div>
+
+        <h3>🍎 Fruits & Natural Sweetness</h3>
+        <div class="food-grid">
+          <div class="food-item"><span class="emoji">🫐</span>Blueberries</div>
+          <div class="food-item"><span class="emoji">🍌</span>Bananas</div>
+          <div class="food-item"><span class="emoji">🍎</span>Apples</div>
+          <div class="food-item"><span class="emoji">🥝</span>Kiwi</div>
+          <div class="food-item"><span class="emoji">🍉</span>Watermelon</div>
+          <div class="food-item"><span class="emoji">🍊</span>Oranges</div>
+          <div class="food-item"><span class="emoji">🍋</span>Lemon</div>
+          <div class="food-item"><span class="emoji">🍓</span>Strawberries</div>
+          <div class="food-item"><span class="emoji">🥝</span>Berries</div>
+          <div class="food-item"><span class="emoji">🍐</span>Pears</span></div>
+          <div class="food-item"><span class="emoji">🫒</span>Avocado</div>
+          <div class="food-item"><span class="emoji">🥥</span>Coconut</div>
+        </div>
+
+        <h3>🐟 Proteins & Healthy Fats</h3>
+        <div class="food-grid">
+          <div class="food-item"><span class="emoji">🐟</span>Salmon</div>
+          <div class="food-item"><span class="emoji">🐔</span>Chicken</div>
+          <div class="food-item"><span class="emoji">🥚</span>Eggs</div>
+          <div class="food-item"><span class="emoji">🫘</span>Lentils</div>
+          <div class="food-item"><span class="emoji">🫛</span>Chickpeas</div>
+          <div class="food-item"><span class="emoji">🥜</span>Nuts</div>
+          <div class="food-item"><span class="emoji">🌻</span>Seeds</div>
+          <div class="food-item"><span class="emoji">🧀</span>Greek Yogurt</div>
+          <div class="food-item"><span class="emoji">🥛</span>Kefir</div>
+          <div class="food-item"><span class="emoji">🍵</span>Green Tea</div>
+          <div class="food-item"><span class="emoji">☕</span>Black Coffee</div>
+          <div class="food-item"><span class="emoji">🍶</span>Water</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>🚫 Foods to Minimize or Avoid</h2>
+          <div class="info-box"><strong>General principle:</strong> Focus on whole foods. The more processed, refined, and added-sugar heavy a food is, the more it challenges your body to regulate itself.</div>
+
+          <h3>❌ Minimize These</h3>
+          <div class="food-grid">
+            <div class="food-item"><span class="emoji">🥤</span>Sugary Drinks</div>
+            <div class="food-item"><span class="emoji">🍟</span>Fried Foods</div>
+            <div class="food-item"><span class="emoji">🍩</span>Pastries</div>
+            <div class="food-item"><span class="emoji">🍕</span>Processed Meat</div>
+            <div class="food-item"><span class="emoji">🍞</span>White Bread</div>
+            <div class="food-item"><span class="emoji">🍝</span>Refined Pasta</div>
+          </div>
+
+          <h3>⚠️ Be Mindful Of</h3>
+          <div class="food-grid">
+            <div class="food-item"><span class="emoji">🧂</span>Excess Salt</div>
+            <div class="food-item"><span class="emoji">🥤</span>Diet Soda</div>
+            <div class="food-item"><span class="emoji">🍯</span>Added Sugars</div>
+            <div class="food-item"><span class="emoji">🥔</span>Fried Potatoes</div>
+            <div class="food-item"><span class="emoji">🍪</span>Cookies</div>
+            <div class="food-item"><span class="emoji">🧃</span>Fruit Juice</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>🍽️ Sample Meals</h2>
+
+          <div class="meal-card">
+            <h4>☀️ Breakfast Ideas</h4>
+            <div class="meal-name">Oats with Berries & Nuts</div>
+            <div class="meal-desc">Steel-cut oats with fresh berries, almonds, cinnamon. Pair with black coffee or green tea.</div>
+            <div class="meal-benefits">
+              <span class="habit-tag tag-nutrition">Nutrition</span>
+              <span class="habit-tag tag-wellness">Wellness</span>
+            </div>
+          </div>
+
+          <div class="meal-card">
+            <h4>🥗 Lunch Ideas</h4>
+            <div class="meal-name">Mediterranean Bowl</div>
+            <div class="meal-desc">Grilled chicken or fish, quinoa, mixed greens, colorful vegetables, olive oil dressing.</div>
+            <div class="meal-benefits">
+              <span class="habit-tag tag-nutrition">Nutrition</span>
+              <span class="habit-tag tag-health">Health</span>
+            </div>
+          </div>
+
+          <div class="meal-card">
+            <h4>🍎 Snack Ideas</h4>
+            <div class="meal-name">Whole Food Snacks</div>
+            <div class="meal-desc">Apple with almond butter, handful of nuts, or Greek yogurt with berries.</div>
+            <div class="meal-benefits">
+              <span class="habit-tag tag-wellness">Wellness</span>
+            </div>
+          </div>
+
+          <div class="meal-card">
+            <h4>🌙 Dinner Ideas</h4>
+            <div class="meal-name">Lean Protein with Vegetables</div>
+            <div class="meal-desc">Grilled chicken, salmon, or turkey with roasted vegetables and brown rice or cauliflower rice.</div>
+            <div class="meal-benefits">
+              <span class="habit-tag tag-nutrition">Nutrition</span>
+              <span class="habit-tag tag-health">Health</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== TAB: EXERCISE PLAN ======================== -->
+  <div class="tab-content" id="tab-exercise">
+    <div class="info-box" style="margin-bottom:20px;">
+      <strong>Exercise Foundation:</strong> A mix of cardiovascular activity (walking, cycling, swimming) and strength training 3-4 times per week creates the best outcomes for health. Consistency matters more than intensity.
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <h2>📅 Weekly Exercise Template</h2>
+
+          <div class="exercise-card">
+            <h4>Monday — Cardio + Core</h4>
+            <div class="duration">45 min activity + 15 min strength</div>
+            <ul>
+              <li>30-45 min: walking, jogging, or cycling</li>
+              <li>Push-ups: 3 × 8-12</li>
+              <li>Planks: 3 × 30-60 seconds</li>
+              <li>Crunches: 3 × 12-15</li>
+            </ul>
+          </div>
+
+          <div class="exercise-card">
+            <h4>Tuesday — Flexibility & Balance</h4>
+            <div class="duration">30-40 min yoga or stretching</div>
+            <div class="details">Focus on breathing and range of motion.</div>
+            <ul>
+              <li>Warm-up walk (10 min)</li>
+              <li>Yoga flow or stretching routine</li>
+              <li>Deep breathing exercises</li>
+              <li>Cool-down meditation</li>
+            </ul>
+          </div>
+
+          <div class="exercise-card">
+            <h4>Wednesday — Lower Body Strength</h4>
+            <div class="duration">45 min activity + 20 min strength</div>
+            <ul>
+              <li>30-45 min: walking or cycling</li>
+              <li>Squats: 3 × 12-15</li>
+              <li>Lunges: 3 × 10 each leg</li>
+              <li>Calf raises: 3 × 15-20</li>
+              <li>Glute bridges: 3 × 12-15</li>
+            </ul>
+          </div>
+
+          <div class="exercise-card">
+            <h4>Thursday — Active Recovery</h4>
+            <div class="duration">30-40 min easy movement</div>
+            <div class="details">Gentle walk, light stretching, or leisurely swimming. Low intensity on purpose.</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card" style="margin-top:0;">
+          <h2>&nbsp;</h2>
+
+          <div class="exercise-card">
+            <h4>Friday — Upper Body Strength</h4>
+            <div class="duration">45 min activity + 20 min strength</div>
+            <ul>
+              <li>30-45 min: walking or recreational sport</li>
+              <li>Rows or pull-ups: 3 × 8-12</li>
+              <li>Shoulder press: 3 × 10-12</li>
+              <li>Dumbbell curls: 3 × 10-12</li>
+              <li>Tricep dips: 3 × 10-12</li>
+            </ul>
+          </div>
+
+          <div class="exercise-card">
+            <h4>Saturday — Enjoyable Movement</h4>
+            <div class="duration">60+ min activity of choice</div>
+            <div class="details">What do you enjoy? Hiking, swimming, dancing, team sports, cycling. The best exercise is the one you'll actually do.</div>
+          </div>
+
+          <div class="exercise-card">
+            <h4>Sunday — Rest & Recovery</h4>
+            <div class="duration">Light stretching + rest</div>
+            <div class="details">Optional gentle yoga or walking. Prioritize sleep and recovery. This is when your body adapts and gets stronger.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>💡 Exercise Principles</h2>
+          <div class="info-box"><strong>Consistency beats intensity:</strong> 30 minutes most days is more effective than occasional 2-hour sessions. Your body responds to regular, repeating signals.</div>
+          <div class="info-box" style="border-color: var(--accent4);"><strong>Build strength:</strong> Muscle tissue is metabolically active and improves your body's ability to regulate itself. Strength training 2-3 times per week is essential.</div>
+          <div class="info-box" style="border-color: var(--accent);"><strong>Post-meal movement:</strong> A 10-15 minute walk after meals helps with digestion and energy regulation. Even light movement makes a difference.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== TAB: HEALTH KNOWLEDGE ======================== -->
+  <div class="tab-content" id="tab-knowledge">
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <h2>🏥 The Fundamentals of Health</h2>
+          <div class="info-box"><strong>The core pillars:</strong> Nutrition, movement, sleep, and stress management create the foundation for long-term health. These work together — neglecting one makes the others harder.</div>
+          <p style="font-size:0.9rem; margin-top:12px;">Modern health challenges often stem from imbalance in these areas. The good news: small, consistent changes in daily habits produce remarkable results over weeks and months.</p>
+
+          <h3>How Diet Shapes Your Health</h3>
+          <p style="font-size:0.9rem;">What you eat directly impacts your energy, hormone balance, digestion, and metabolism. A diet rich in whole foods—vegetables, fruits, lean proteins, healthy fats—provides the nutrients your body needs to function optimally.</p>
+          <div class="info-box" style="margin-top:12px;"><strong>Plant-forward eating:</strong> Vegetables and whole grains provide fiber, vitamins, and minerals. Aim to fill half your plate with vegetables at main meals.</div>
+          <div class="info-box" style="border-color:var(--accent);"><strong>Protein matters:</strong> Every meal should include a protein source. Protein supports muscle, keeps you satisfied, and stabilizes energy levels.</div>
+          <div class="info-box" style="border-color:var(--accent4);"><strong>Healthy fats:</strong> Olive oil, nuts, seeds, and fatty fish support brain function and nutrient absorption. Don't fear fat—choose whole food sources.</div>
+        </div>
+
+        <div class="card">
+          <h2>❤️ Understanding Blood Pressure & Heart Health</h2>
+          <p style="font-size:0.9rem;">Blood pressure is the force of blood against artery walls. When consistently elevated, it strains your heart and vessels. Good news: lifestyle changes are highly effective.</p>
+
+          <h3>Key Strategies</h3>
+          <div class="info-box"><strong>Potassium-rich foods:</strong> Bananas, spinach, sweet potatoes, beans. Potassium helps counterbalance sodium's effect on blood pressure.</div>
+          <div class="info-box" style="border-color:var(--accent4);"><strong>Sleep is powerful:</strong> Aim for 7-9 hours nightly. Poor sleep directly raises blood pressure and stress hormones.</div>
+          <div class="info-box" style="border-color:var(--accent);"><strong>Breathing exercises:</strong> Slow, deep breathing (box breathing: 4-in, 4-hold, 4-out, 4-hold) reduces stress and can lower BP acutely and over time.</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>🔋 Energy & Metabolism</h2>
+          <p style="font-size:0.9rem;">Your metabolism is how your body converts food into energy. Multiple factors influence it: muscle mass, activity level, sleep, hydration, and meal composition.</p>
+
+          <h3>Supporting Healthy Metabolism</h3>
+          <div class="info-box"><strong>Consistent meal timing:</strong> Eating at regular times helps regulate hunger hormones and energy levels. Erratic eating patterns confuse your metabolism.</div>
+          <div class="info-box" style="border-color:var(--accent3);"><strong>Movement throughout the day:</strong> Don't rely on one workout. Regular movement—walking, stretching, standing—keeps metabolism active.</div>
+          <div class="info-box" style="border-color:var(--accent);"><strong>Stay hydrated:</strong> Water is essential for every metabolic process. Dehydration slows metabolism and can masquerade as hunger.</div>
+          <div class="info-box" style="border-color:var(--accent4);"><strong>Strength training:</strong> Muscle tissue is metabolically active—it burns calories even at rest. Adding strength work speeds up your resting metabolism.</div>
+        </div>
+
+        <div class="card">
+          <h2>😴 Sleep Quality Matters</h2>
+          <p style="font-size:0.9rem;">Sleep is when your body repairs, consolidates memories, and regulates hormones. Poor sleep undermines every other health effort.</p>
+
+          <h3>Sleep Hygiene Tips</h3>
+          <div class="info-box"><strong>Consistent schedule:</strong> Go to bed and wake at the same time daily, even weekends. This syncs your circadian rhythm.</div>
+          <div class="info-box" style="border-color:var(--accent3);"><strong>Cool, dark environment:</strong> Keep your bedroom around 65-68°F (18-20°C). Darkness supports melatonin production.</div>
+          <div class="info-box" style="border-color:var(--accent);"><strong>No screens 30-60 min before bed:</strong> Blue light suppresses melatonin. Read a book or do light stretching instead.</div>
+          <div class="info-box" style="border-color:var(--accent4);"><strong>Limit caffeine after 2 PM:</strong> Caffeine has a 5-6 hour half-life. Late caffeine disrupts sleep quality.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== TAB: DAILY SCHEDULE ======================== -->
+  <div class="tab-content" id="tab-schedule">
+    <div class="grid-2">
+      <div class="card">
+        <h2>⏰ Sample Daily Schedule</h2>
+        <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:16px;">Adapt this to your personal rhythm and schedule. The key is consistency.</p>
+
+        <div class="timeline-item">
+          <div class="timeline-time">6:30-7:00 AM</div>
+          <div class="timeline-content">
+            <div class="title">Wake & Hydrate</div>
+            <div class="detail">Glass of water, perhaps with lemon. This rehydrates after sleep and kickstarts digestion.</div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-time">7:00-7:45 AM</div>
+          <div class="timeline-content">
+            <div class="title">Morning Movement</div>
+            <div class="detail">30-45 min walk, jog, or other cardio. Morning movement boosts mood and energy for the day.</div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-time">8:00-8:30 AM</div>
+          <div class="timeline-content">
+            <div class="title">Breakfast</div>
+            <div class="detail">Balanced meal with protein, whole grains, and vegetables. Coffee or tea welcome.</div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-time">10:00-10:15 AM</div>
+          <div class="timeline-content">
+            <div class="title">Mid-Morning Hydration</div>
+            <div class="detail">Check your water intake. Have a glass of water and perhaps a light snack if hungry.</div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-time">12:30-1:00 PM</div>
+          <div class="timeline-content">
+            <div class="title">Lunch</div>
+            <div class="detail">Balanced meal: vegetables, protein, whole grains. Eat mindfully, not while distracted.</div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-time">1:00-1:15 PM</div>
+          <div class="timeline-content">
+            <div class="title">Post-Lunch Movement</div>
+            <div class="detail">10-15 min walk. Aids digestion and supports stable energy for the afternoon.</div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-time">3:30-4:00 PM</div>
+          <div class="timeline-content">
+            <div class="title">Afternoon Snack</div>
+            <div class="detail">Whole food snack: fruit with nuts, yogurt with berries, or veggies with hummus.</div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-time">5:00-5:30 PM</div>
+          <div class="timeline-content">
+            <div class="title">Movement Session</div>
+            <div class="detail">20-30 min strength training, yoga, or additional cardio per your weekly plan.</div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-time">6:30-7:00 PM</div>
+          <div class="timeline-content">
+            <div class="title">Dinner</div>
+            <div class="detail">Lean protein with roasted vegetables and whole grains. Finish eating by 7-8 PM if possible.</div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-time">7:15-7:30 PM</div>
+          <div class="timeline-content">
+            <div class="title">Post-Dinner Walk</div>
+            <div class="detail">10-15 min walk. Great for digestion and evening energy management.</div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-time">8:30-9:00 PM</div>
+          <div class="timeline-content">
+            <div class="title">Wind Down</div>
+            <div class="detail">5-10 min stretching or breathing exercises. No screens. Dim lights. Prepare for sleep.</div>
+          </div>
+        </div>
+
+        <div class="timeline-item">
+          <div class="timeline-time">10:00 PM</div>
+          <div class="timeline-content">
+            <div class="title">Sleep</div>
+            <div class="detail">Target 7-9 hours. Consistent sleep schedule supports all health goals.</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>🔑 Building Sustainable Habits</h2>
+          <div class="info-box"><strong>Start small:</strong> Don't overhaul everything at once. Add one new habit per week. Small wins build momentum.</div>
+          <div class="info-box" style="border-color:var(--accent);"><strong>Stack habits:</strong> Attach new habits to existing ones. Example: "After I finish breakfast, I'll drink a glass of water."</div>
+          <div class="info-box" style="border-color:var(--accent3);"><strong>Track progress:</strong> Use this dashboard daily. Seeing progress motivates continued effort.</div>
+          <div class="info-box" style="border-color:var(--accent4);"><strong>Plan for obstacles:</strong> If you know Tuesday is busy, plan a shorter workout. Anticipating barriers keeps you on track.</div>
+        </div>
+
+        <div class="card">
+          <h2>📊 4-Week Progressive Plan</h2>
+          <p style="font-size:0.85rem; color:var(--text-dim); margin-bottom:12px;">A gradual approach prevents overwhelm and builds lasting habits.</p>
+
+          <div class="exercise-card">
+            <h4>Weeks 1-2: Establish Foundation</h4>
+            <div class="details">Focus on: daily water intake, morning movement, cutting sugary drinks completely, one strength session.</div>
+          </div>
+
+          <div class="exercise-card">
+            <h4>Weeks 3-4: Build Momentum</h4>
+            <div class="details">Add: post-meal walks, 2 strength sessions weekly, meal planning on Sundays, consistent sleep schedule.</div>
+          </div>
+
+          <div class="exercise-card">
+            <h4>Weeks 5-6: Expand Capacity</h4>
+            <div class="details">Add: 3 strength sessions weekly, flexibility work, breathing exercises, more refined food choices.</div>
+          </div>
+
+          <div class="exercise-card">
+            <h4>Weeks 7-8+: Full Integration</h4>
+            <div class="details">All habits active. Full exercise schedule. Evaluate progress. Adjust based on how you feel.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== INITIALIZATION =====
+let userProfile = null;
+let currentDate = new Date();
+let habitProgress = {};
+
+function initializeApp() {
+  loadUserProfile();
+  if (!userProfile) {
+    showOnboarding();
+  } else {
+    updateHeader();
+    initializeProgress();
+    renderHabits();
+    renderWaterTracker();
+    renderStreak();
+    updateProgress();
+    updateDateDisplay();
+  }
+}
+
+function loadUserProfile() {
+  const saved = localStorage.getItem('userProfile');
+  if (saved) {
+    userProfile = JSON.parse(saved);
+  }
+}
+
+function saveUserProfile() {
+  localStorage.setItem('userProfile', JSON.stringify(userProfile));
+}
+
+function showOnboarding() {
+  document.getElementById('onboardingModal').classList.add('active');
+}
+
+function closeOnboarding() {
+  document.getElementById('onboardingModal').classList.remove('active');
+}
+
+function openSettings() {
+  document.getElementById('settingsUserName').value = userProfile.name || '';
+  document.getElementById('settingsTargetWeight').value = userProfile.targetWeight || '';
+  document.getElementById('settingsWaterGoal').value = userProfile.waterGoal || 8;
+  document.getElementById('settingsSleepGoal').value = userProfile.sleepGoal || 7.5;
+  
+  document.querySelectorAll('#settingsForm input[name="goals"]').forEach(cb => {
+    cb.checked = userProfile.goals.includes(cb.value);
+  });
+  
+  document.getElementById('settingsModal').classList.add('active');
+}
+
+function closeSettings() {
+  document.getElementById('settingsModal').classList.remove('active');
+}
+
+document.getElementById('onboardingForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const goals = Array.from(document.querySelectorAll('#onboardingForm input[name="goals"]:checked'))
+    .map(cb => cb.value);
+  
+  userProfile = {
+    name: document.getElementById('userName').value || 'Friend',
+    goals: goals.length > 0 ? goals : ['general-wellness'],
+    targetWeight: parseFloat(document.getElementById('targetWeight').value) || null,
+    waterGoal: parseInt(document.getElementById('waterGoal').value) || 8,
+    sleepGoal: parseFloat(document.getElementById('sleepGoal').value) || 7.5
+  };
+  
+  saveUserProfile();
+  closeOnboarding();
+  updateHeader();
+  initializeProgress();
+  renderHabits();
+  renderWaterTracker();
+  renderStreak();
+  updateProgress();
+});
+
+document.getElementById('settingsForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const goals = Array.from(document.querySelectorAll('#settingsForm input[name="goals"]:checked'))
+    .map(cb => cb.value);
+  
+  userProfile.name = document.getElementById('settingsUserName').value || 'Friend';
+  userProfile.goals = goals.length > 0 ? goals : ['general-wellness'];
+  userProfile.targetWeight = parseFloat(document.getElementById('settingsTargetWeight').value) || null;
+  userProfile.waterGoal = parseInt(document.getElementById('settingsWaterGoal').value) || 8;
+  userProfile.sleepGoal = parseFloat(document.getElementById('settingsSleepGoal').value) || 7.5;
+  
+  saveUserProfile();
+  closeSettings();
+  updateHeader();
+  renderWaterTracker();
+  updateProgress();
+});
+
+function updateHeader() {
+  const greeting = userProfile.name && userProfile.name !== 'Friend' 
+    ? `Welcome, ${userProfile.name}!`
+    : 'Your personalized wellness tracker';
+  document.getElementById('headerGreeting').textContent = greeting;
+  document.getElementById('waterGoalDisplay').textContent = userProfile.waterGoal || 8;
+}
+
+// ===== HABIT DATA =====
+const nutritionHabits = [
+  { id: 'n1', label: 'Eat vegetables first at every meal', desc: 'Supports digestion and blood sugar stability', tags: ['nutrition'] },
+  { id: 'n2', label: 'Avoid sugary drinks', desc: 'Cut soda, juice, and sweetened beverages', tags: ['nutrition', 'health'] },
+  { id: 'n3', label: 'Include protein at each meal', desc: 'Keeps you satisfied and supports muscle', tags: ['nutrition'] },
+  { id: 'n4', label: 'Eat colorful vegetables', desc: 'Different colors = different nutrients', tags: ['nutrition', 'wellness'] },
+  { id: 'n5', label: 'Stay hydrated with water', desc: 'Supports metabolism and energy', tags: ['wellness'] },
+  { id: 'n6', label: 'Limit processed foods', desc: 'Whole foods fuel your body better', tags: ['nutrition', 'health'] },
+  { id: 'n7', label: 'Include healthy fats', desc: 'Nuts, olive oil, avocado support brain and heart', tags: ['nutrition', 'health'] }
+];
+
+const exerciseHabits = [
+  { id: 'e1', label: 'Morning movement (20-45 min)', desc: 'Boosts energy and metabolism for the day', tags: ['fitness', 'wellness'] },
+  { id: 'e2', label: 'Post-meal walk (10-15 min)', desc: 'Aids digestion and supports energy levels', tags: ['fitness', 'health'] },
+  { id: 'e3', label: 'Strength training session', desc: 'Build muscle and support metabolism', tags: ['fitness', 'health'] },
+  { id: 'e4', label: 'Stretching or yoga', desc: 'Improves flexibility and reduces tension', tags: ['fitness', 'wellness'] }
+];
+
+const lifestyleHabits = [
+  { id: 'l1', label: 'Drink recommended water', desc: 'Essential for every body function', tags: ['wellness', 'health'] },
+  { id: 'l2', label: 'Get 7+ hours of sleep', desc: 'Sleep deprivation undermines all health goals', tags: ['wellness', 'health'] },
+  { id: 'l3', label: 'Breathing exercise (5 min)', desc: 'Reduces stress and supports calm focus', tags: ['wellness'] },
+  { id: 'l4', label: 'No screens 30 min before bed', desc: 'Improves sleep quality significantly', tags: ['wellness'] },
+  { id: 'l5', label: 'Meal planning or prep', desc: 'Sets you up for success throughout the week', tags: ['nutrition', 'wellness'] }
+];
+
+// ===== PROGRESS TRACKING =====
+function initializeProgress() {
+  const today = getDateKey();
+  const saved = localStorage.getItem(`progress-${today}`);
+  if (saved) {
+    habitProgress = JSON.parse(saved);
+  } else {
+    habitProgress = {};
+    [...nutritionHabits, ...exerciseHabits, ...lifestyleHabits].forEach(h => {
+      habitProgress[h.id] = false;
+    });
+  }
+}
+
+function saveProgress() {
+  const today = getDateKey();
+  localStorage.setItem(`progress-${today}`, JSON.stringify(habitProgress));
+  updateProgress();
+}
+
+function getDateKey() {
+  const y = currentDate.getFullYear();
+  const m = String(currentDate.getMonth() + 1).padStart(2, '0');
+  const d = String(currentDate.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function toggleHabit(id) {
+  habitProgress[id] = !habitProgress[id];
+  saveProgress();
+  renderHabits();
+}
+
+function resetDay() {
+  if (confirm('Reset all habits for today?')) {
+    habitProgress = {};
+    [...nutritionHabits, ...exerciseHabits, ...lifestyleHabits].forEach(h => {
+      habitProgress[h.id] = false;
+    });
+    saveProgress();
+    renderHabits();
+  }
+}
+
+// ===== RENDERING =====
+function renderHabits() {
+  const renderGroup = (habits, containerId) => {
+    const container = document.getElementById(containerId);
+    container.innerHTML = habits.map(habit => {
+      const checked = habitProgress[habit.id] ? 'checked' : '';
+      return `
+        <div class="habit-item ${checked}" onclick="toggleHabit('${habit.id}')">
+          <div class="habit-check"></div>
+          <div class="habit-text">
+            <div class="label">${habit.label}</div>
+            <div class="desc">${habit.desc}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  };
+  
+  renderGroup(nutritionHabits, 'nutritionHabits');
+  renderGroup(exerciseHabits, 'exerciseHabits');
+  renderGroup(lifestyleHabits, 'lifestyleHabits');
+}
+
+function renderWaterTracker() {
+  const waterGoal = userProfile.waterGoal || 8;
+  const waterCount = Object.values(habitProgress).filter((v, i) => {
+    const id = Object.keys(habitProgress)[i];
+    return id === 'l1' && v;
+  }).length;
+  
+  let waterIntake = 0;
+  const waterHabitId = 'l1';
+  if (habitProgress[waterHabitId]) {
+    waterIntake = waterGoal;
+  } else {
+    waterIntake = Object.keys(habitProgress).filter(id => habitProgress[id]).length;
+  }
+  
+  const tracker = document.getElementById('waterTracker');
+  let html = '';
+  for (let i = 0; i < waterGoal; i++) {
+    const filled = i < waterIntake ? 'filled' : '';
+    html += `<div class="water-glass ${filled}" onclick="toggleWaterGlass(${i})"><div class="water-fill"></div></div>`;
+  }
+  html += `<div class="water-count">${waterIntake}/${waterGoal}</div>`;
+  tracker.innerHTML = html;
+}
+
+function toggleWaterGlass(index) {
+  const waterGoal = userProfile.waterGoal || 8;
+  const waterCount = parseInt(document.querySelector('.water-count').textContent.split('/')[0]);
+  const newCount = index + 1;
+  
+  for (let i = 0; i < waterGoal; i++) {
+    if (i < newCount) {
+      habitProgress[`water-${i}`] = true;
+    } else {
+      habitProgress[`water-${i}`] = false;
+    }
+  }
+  saveProgress();
+  renderWaterTracker();
+  updateProgress();
+}
+
+function renderStreak() {
+  const streakRow = document.getElementById('streakRow');
+  let html = '';
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date(currentDate);
+    date.setDate(date.getDate() - i);
+    const key = getDateKeyForDate(date);
+    const saved = localStorage.getItem(`progress-${key}`);
+    const progress = saved ? JSON.parse(saved) : {};
+    
+    const total = [...nutritionHabits, ...exerciseHabits, ...lifestyleHabits].length;
+    const completed = Object.values(progress).filter(v => v).length;
+    const percentage = total > 0 ? completed / total : 0;
+    const isDone = percentage >= 0.8;
+    const isToday = i === 0;
+    
+    const classes = `${isDone ? 'done' : ''} ${isToday ? 'today' : ''}`;
+    const dayLabel = i === 0 ? 'Today' : ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][date.getDay()];
+    html += `<div class="streak-day ${classes}" title="${dayLabel}">${dayLabel.charAt(0)}</div>`;
+  }
+  streakRow.innerHTML = html;
+}
+
+function getDateKeyForDate(date) {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function updateProgress() {
+  const total = [...nutritionHabits, ...exerciseHabits, ...lifestyleHabits].length;
+  const completed = Object.values(habitProgress).filter(v => v).length;
+  
+  const nutritionTotal = nutritionHabits.length;
+  const nutritionDone = nutritionHabits.filter(h => habitProgress[h.id]).length;
+  
+  const exerciseTotal = exerciseHabits.length;
+  const exerciseDone = exerciseHabits.filter(h => habitProgress[h.id]).length;
+  
+  updateRing('overall', completed, total);
+  updateRing('nutrition', nutritionDone, nutritionTotal);
+  updateRing('exercise', exerciseDone, exerciseTotal);
+}
+
+function updateRing(type, completed, total) {
+  const percent = total > 0 ? Math.round((completed / total) * 100) : 0;
+  document.getElementById(`pct-${type}`).textContent = percent + '%';
+  
+  const circle = document.querySelector(`#ring-${type} .fg`);
+  const radius = 52;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (percent / 100) * circumference;
+  circle.style.strokeDasharray = circumference;
+  circle.style.strokeDashoffset = offset;
+}
+
+function updateDateDisplay() {
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  document.getElementById('currentDate').textContent = currentDate.toLocaleDateString('en-US', options);
+  initializeProgress();
+  renderHabits();
+  renderWaterTracker();
+  updateProgress();
+}
+
+function changeDate(direction) {
+  currentDate.setDate(currentDate.getDate() + direction);
+  updateDateDisplay();
+}
+
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  
+  document.getElementById(`tab-${tabName}`).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// Initialize on load
+window.addEventListener('load', initializeApp);
+
+// Allow closing modals by clicking overlay
+document.getElementById('onboardingModal').addEventListener('click', function(e) {
+  if (e.target === this && userProfile) closeOnboarding();
+});
+
+document.getElementById('settingsModal').addEventListener('click', function(e) {
+  if (e.target === this) closeSettings();
+});
+</script>
+
+</body>
+</html>
