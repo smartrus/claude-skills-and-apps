@@ -65,7 +65,9 @@ If no user profile exists yet, ask the user about their health goals and targets
 
 if not os.path.exists(target):
     print(f"Warning: {target} does not exist — creating it")
-    os.makedirs(os.path.dirname(target), exist_ok=True)
+    dir_name = os.path.dirname(target)
+    if dir_name:
+        os.makedirs(dir_name, exist_ok=True)
 
 with open(target, "a") as f:
     f.write(HEALTH_TRACKER_SECTION)

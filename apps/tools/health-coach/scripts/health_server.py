@@ -49,11 +49,13 @@ class HealthHandler(SimpleHTTPRequestHandler):
         self.dashboard_dir = os.path.abspath(ARGS.dashboard_dir)
         super().__init__(*args, directory=self.dashboard_dir, **kwargs)
 
+    ALLOWED_ORIGIN = os.environ.get("CORS_ORIGIN", "http://localhost:8777")
+
     def _send_json(self, data, status=200):
         body = json.dumps(data, indent=2, ensure_ascii=False).encode()
         self.send_response(status)
         self.send_header("Content-Type", "application/json")
-        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Origin", self.ALLOWED_ORIGIN)
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
@@ -67,7 +69,17 @@ class HealthHandler(SimpleHTTPRequestHandler):
                 json.dump({}, f)
             return {}
         with open(data_file, "r") as f:
-            return json.load(f)
+            try:
+                return json.load(f)
+            except json.JSONDecodeError:
+                backup = data_file + ".bak"
+                try:
+                    os.replace(data_file, backup)
+                except OSError:
+                    pass
+                with open(data_file, "w") as nf:
+                    json.dump({}, nf)
+                return {}
 
     def _write_data(self, data):
         data_file = os.path.abspath(ARGS.data_file)
@@ -77,7 +89,7 @@ class HealthHandler(SimpleHTTPRequestHandler):
 
     def do_OPTIONS(self):
         self.send_response(204)
-        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Origin", self.ALLOWED_ORIGIN)
         self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
@@ -123,31 +135,47 @@ class HealthHandler(SimpleHTTPRequestHandler):
             day = data[date]
 
             if habit_id == "water":
-                day["water"] = max(day.get("water", 0), min(int(value), 20))
+                try:
+                    water_value = int(value)
+                except (TypeError, ValueError):
+                    self._send_json(
+                        {"error": "Invalid water value; expected integer"}, 400
+                    )
+                    return
+                day["water"] = max(day.get("water", 0), min(water_value, 20))
+                # Derive l1 from water count
+                water_goal = 8  # default; could be user-configurable
+                day["habits"]["l1"] = day["water"] >= water_goal
             elif habit_id == "notes":
                 existing = day.get("notes", "")
                 day["notes"] = f"{existing} | {value}" if existing else value
             else:
-                day["habits"][habit_id] = bool(value)
+                # Parse boolean values explicitly
+                if isinstance(value, bool):
+                    parsed = value
+                elif isinstance(value, str):
+                    parsed = value.lower() in ("true", "1", "yes", "done")
+                else:
+                    parsed = bool(value)
+                day["habits"][habit_id] = parsed
 
             self._write_data(data)
 
-            # Calculate progress
-            all_ids = (
+            # Calculate progress — l1 is derived from water, not double-counted
+            habit_ids = (
                 [f"n{i}" for i in range(1, 8)]
                 + [f"e{i}" for i in range(1, 5)]
                 + [f"l{i}" for i in range(1, 6)]
             )
-            done = sum(1 for h in all_ids if day.get("habits", {}).get(h, False))
-            water_done = 1 if day.get("water", 0) >= 8 else 0
-            total = len(all_ids) + 1
-            pct = (done + water_done) / total * 100
+            done = sum(1 for h in habit_ids if day.get("habits", {}).get(h, False))
+            total = len(habit_ids)
+            pct = done / total * 100 if total > 0 else 0
 
             self._send_json({
                 "ok": True,
                 "date": date,
                 "habit_id": habit_id,
-                "progress": f"{done + water_done}/{total}",
+                "progress": f"{done}/{total}",
                 "percentage": round(pct),
             })
 

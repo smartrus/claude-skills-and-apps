@@ -1350,26 +1350,26 @@ function updateHeader() {
 const nutritionHabits = [
   { id: 'n1', label: 'Eat vegetables first at every meal', desc: 'Supports digestion and blood sugar stability', tags: ['nutrition'] },
   { id: 'n2', label: 'Avoid sugary drinks', desc: 'Cut soda, juice, and sweetened beverages', tags: ['nutrition', 'health'] },
-  { id: 'n3', label: 'Include protein at each meal', desc: 'Keeps you satisfied and supports muscle', tags: ['nutrition'] },
-  { id: 'n4', label: 'Eat colorful vegetables', desc: 'Different colors = different nutrients', tags: ['nutrition', 'wellness'] },
-  { id: 'n5', label: 'Stay hydrated with water', desc: 'Supports metabolism and energy', tags: ['wellness'] },
-  { id: 'n6', label: 'Limit processed foods', desc: 'Whole foods fuel your body better', tags: ['nutrition', 'health'] },
-  { id: 'n7', label: 'Include healthy fats', desc: 'Nuts, olive oil, avocado support brain and heart', tags: ['nutrition', 'health'] }
+  { id: 'n3', label: 'Eat fatty fish or omega-3', desc: 'Supports heart and brain health', tags: ['nutrition', 'health'] },
+  { id: 'n4', label: 'Leafy greens at 2+ meals', desc: 'Packed with vitamins, minerals, and fiber', tags: ['nutrition', 'wellness'] },
+  { id: 'n5', label: 'Keep eating window 10-12 hours', desc: 'Supports metabolism and circadian rhythm', tags: ['nutrition'] },
+  { id: 'n6', label: 'Limit sodium intake', desc: 'Supports healthy blood pressure', tags: ['nutrition', 'health'] },
+  { id: 'n7', label: 'Handful of nuts daily', desc: 'Healthy fats, protein, and micronutrients', tags: ['nutrition', 'health'] }
 ];
 
 const exerciseHabits = [
-  { id: 'e1', label: 'Morning movement (20-45 min)', desc: 'Boosts energy and metabolism for the day', tags: ['fitness', 'wellness'] },
-  { id: 'e2', label: 'Post-meal walk (10-15 min)', desc: 'Aids digestion and supports energy levels', tags: ['fitness', 'health'] },
-  { id: 'e3', label: 'Strength training session', desc: 'Build muscle and support metabolism', tags: ['fitness', 'health'] },
-  { id: 'e4', label: 'Stretching or yoga', desc: 'Improves flexibility and reduces tension', tags: ['fitness', 'wellness'] }
+  { id: 'e1', label: 'Morning walk (30-45 min)', desc: 'Boosts energy and metabolism for the day', tags: ['fitness', 'wellness'] },
+  { id: 'e2', label: 'Post-lunch walk (10-15 min)', desc: 'Aids digestion and lowers blood sugar spikes', tags: ['fitness', 'health'] },
+  { id: 'e3', label: 'Post-dinner walk (10-15 min)', desc: 'Most important walk for blood sugar control', tags: ['fitness', 'health'] },
+  { id: 'e4', label: 'Home workout or yoga session', desc: 'Build strength, flexibility, and resilience', tags: ['fitness', 'wellness'] }
 ];
 
 const lifestyleHabits = [
-  { id: 'l1', label: 'Drink recommended water', desc: 'Essential for every body function', tags: ['wellness', 'health'] },
-  { id: 'l2', label: 'Get 7+ hours of sleep', desc: 'Sleep deprivation undermines all health goals', tags: ['wellness', 'health'] },
+  { id: 'l1', label: 'Meet daily water goal', desc: 'Automatically tracked from water count below', tags: ['wellness', 'health'], derived: true },
+  { id: 'l2', label: 'Morning water with lemon', desc: 'Supports digestion and hydration', tags: ['wellness', 'health'] },
   { id: 'l3', label: 'Breathing exercise (5 min)', desc: 'Reduces stress and supports calm focus', tags: ['wellness'] },
-  { id: 'l4', label: 'No screens 30 min before bed', desc: 'Improves sleep quality significantly', tags: ['wellness'] },
-  { id: 'l5', label: 'Meal planning or prep', desc: 'Sets you up for success throughout the week', tags: ['nutrition', 'wellness'] }
+  { id: 'l4', label: 'Slept 7+ hours', desc: 'Sleep deprivation undermines all health goals', tags: ['wellness', 'health'] },
+  { id: 'l5', label: 'No screens 30 min before bed', desc: 'Improves sleep quality significantly', tags: ['wellness'] }
 ];
 
 // ===== PROGRESS TRACKING =====
@@ -1378,8 +1378,12 @@ function initializeProgress() {
   const saved = localStorage.getItem(`progress-${today}`);
   if (saved) {
     habitProgress = JSON.parse(saved);
+    // Ensure water is a number (migration from old format)
+    if (typeof habitProgress.water !== 'number') {
+      habitProgress.water = 0;
+    }
   } else {
-    habitProgress = {};
+    habitProgress = { water: 0 };
     [...nutritionHabits, ...exerciseHabits, ...lifestyleHabits].forEach(h => {
       habitProgress[h.id] = false;
     });
@@ -1407,12 +1411,13 @@ function toggleHabit(id) {
 
 function resetDay() {
   if (confirm('Reset all habits for today?')) {
-    habitProgress = {};
+    habitProgress = { water: 0 };
     [...nutritionHabits, ...exerciseHabits, ...lifestyleHabits].forEach(h => {
       habitProgress[h.id] = false;
     });
     saveProgress();
     renderHabits();
+    renderWaterTracker();
   }
 }
 
@@ -1422,8 +1427,13 @@ function renderHabits() {
     const container = document.getElementById(containerId);
     container.innerHTML = habits.map(habit => {
       const checked = habitProgress[habit.id] ? 'checked' : '';
+      const derived = habit.derived ? ' derived' : '';
+      const disabled = habit.derived ? ' disabled title="Derived from water count"' : '';
       return `
-        <div class="habit-item ${checked}" onclick="toggleHabit('${habit.id}')">
+        <div class="habit-item ${checked}${derived}" role="button" tabindex="0"
+             onclick="${habit.derived ? '' : `toggleHabit('${habit.id}')`}"
+             onkeydown="${habit.derived ? '' : `if(event.key==='Enter'||event.key===' '){event.preventDefault();toggleHabit('${habit.id}')}`}"
+             aria-label="${habit.label}: ${checked ? 'done' : 'not done'}"${disabled}>
           <div class="habit-check"></div>
           <div class="habit-text">
             <div class="label">${habit.label}</div>
@@ -1441,24 +1451,13 @@ function renderHabits() {
 
 function renderWaterTracker() {
   const waterGoal = userProfile.waterGoal || 8;
-  const waterCount = Object.values(habitProgress).filter((v, i) => {
-    const id = Object.keys(habitProgress)[i];
-    return id === 'l1' && v;
-  }).length;
-  
-  let waterIntake = 0;
-  const waterHabitId = 'l1';
-  if (habitProgress[waterHabitId]) {
-    waterIntake = waterGoal;
-  } else {
-    waterIntake = Object.keys(habitProgress).filter(id => habitProgress[id]).length;
-  }
-  
+  const waterIntake = habitProgress.water || 0;
+
   const tracker = document.getElementById('waterTracker');
   let html = '';
   for (let i = 0; i < waterGoal; i++) {
     const filled = i < waterIntake ? 'filled' : '';
-    html += `<div class="water-glass ${filled}" onclick="toggleWaterGlass(${i})"><div class="water-fill"></div></div>`;
+    html += `<button class="water-glass ${filled}" onclick="toggleWaterGlass(${i})" role="button" aria-label="Glass ${i + 1} of ${waterGoal}"><div class="water-fill"></div></button>`;
   }
   html += `<div class="water-count">${waterIntake}/${waterGoal}</div>`;
   tracker.innerHTML = html;
@@ -1466,16 +1465,15 @@ function renderWaterTracker() {
 
 function toggleWaterGlass(index) {
   const waterGoal = userProfile.waterGoal || 8;
-  const waterCount = parseInt(document.querySelector('.water-count').textContent.split('/')[0]);
-  const newCount = index + 1;
-  
-  for (let i = 0; i < waterGoal; i++) {
-    if (i < newCount) {
-      habitProgress[`water-${i}`] = true;
-    } else {
-      habitProgress[`water-${i}`] = false;
-    }
-  }
+  const currentWater = habitProgress.water || 0;
+  const clickedCount = index + 1;
+
+  // Toggle: if clicking the current level, decrease by 1; otherwise set to clicked level
+  habitProgress.water = (clickedCount === currentWater) ? currentWater - 1 : clickedCount;
+
+  // Derive l1 from water count
+  habitProgress.l1 = habitProgress.water >= waterGoal;
+
   saveProgress();
   renderWaterTracker();
   updateProgress();
@@ -1491,8 +1489,9 @@ function renderStreak() {
     const saved = localStorage.getItem(`progress-${key}`);
     const progress = saved ? JSON.parse(saved) : {};
     
-    const total = [...nutritionHabits, ...exerciseHabits, ...lifestyleHabits].length;
-    const completed = Object.values(progress).filter(v => v).length;
+    const allHabits = [...nutritionHabits, ...exerciseHabits, ...lifestyleHabits];
+    const total = allHabits.length;
+    const completed = allHabits.filter(h => progress[h.id]).length;
     const percentage = total > 0 ? completed / total : 0;
     const isDone = percentage >= 0.8;
     const isToday = i === 0;
@@ -1512,15 +1511,16 @@ function getDateKeyForDate(date) {
 }
 
 function updateProgress() {
-  const total = [...nutritionHabits, ...exerciseHabits, ...lifestyleHabits].length;
-  const completed = Object.values(habitProgress).filter(v => v).length;
-  
+  const allHabits = [...nutritionHabits, ...exerciseHabits, ...lifestyleHabits];
+  const total = allHabits.length;
+  const completed = allHabits.filter(h => habitProgress[h.id]).length;
+
   const nutritionTotal = nutritionHabits.length;
   const nutritionDone = nutritionHabits.filter(h => habitProgress[h.id]).length;
-  
+
   const exerciseTotal = exerciseHabits.length;
   const exerciseDone = exerciseHabits.filter(h => habitProgress[h.id]).length;
-  
+
   updateRing('overall', completed, total);
   updateRing('nutrition', nutritionDone, nutritionTotal);
   updateRing('exercise', exerciseDone, exerciseTotal);
@@ -1552,12 +1552,16 @@ function changeDate(direction) {
   updateDateDisplay();
 }
 
-function switchTab(tabName) {
+function switchTab(tabName, evt) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
-  
+
   document.getElementById(`tab-${tabName}`).classList.add('active');
-  event.target.classList.add('active');
+
+  // Find the clicked tab button
+  const src = evt || window.event;
+  const btn = src ? (src.currentTarget || src.target) : document.querySelector(`.tab[data-tab="${tabName}"]`);
+  if (btn && btn.classList) btn.classList.add('active');
 }
 
 // Initialize on load

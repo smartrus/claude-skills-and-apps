@@ -16,7 +16,7 @@ set -euo pipefail
 
 # ── Configuration ────────────────────────────────────────────────
 # Replace these with your actual values
-SERVER_SSH="ssh -o ConnectTimeout=10 -o BatchMode=yes -i \$HOME/.ssh/YOUR_SSH_KEY root@YOUR_SERVER_IP"
+SERVER_SSH="ssh -o ConnectTimeout=10 -o BatchMode=yes -i $HOME/.ssh/YOUR_SSH_KEY root@YOUR_SERVER_IP"
 CONTAINER_NAME="openclaw-gateway"           # Docker container name filter
 CONTAINER_FILE="/home/node/health_data.json" # Path inside the container
 LOCAL_FILE="$HOME/health-coach/data/health_data.json"
