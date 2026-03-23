@@ -1,0 +1,107 @@
+# Claude Skills & Apps
+
+> A curated, open-source collection of production-ready skills and apps for Claude Code, Cowork, and compatible AI coding agents. MIT license. Contributions welcome.
+
+Repository: https://github.com/smartrus/claude-skills-and-apps
+
+## What this repo is
+
+This repository provides two types of artifacts:
+
+- **Skills** — self-contained prompt modules (`SKILL.md` + optional scripts/references/assets) that give Claude specialized expertise in a domain. Drop a skill folder into your Claude Code project or Cowork session to activate it.
+- **Apps** — standalone tools, dashboards, and automations built with Claude. Each app is fully documented and ready to run or adapt.
+
+Skills are organized by domain under `skills/<domain>/<skill-name>/`. Apps are organized by category under `apps/<category>/<app-name>/`.
+
+## Skill domains
+
+- `skills/engineering/` — API migration, mutation testing, code review, architecture, debugging
+- `skills/marketing/` — AI citation strategy, carousel content, cross-cultural UX auditing, immersive storytelling, semantic communications
+- `skills/operations/` — AIOps telemetry, autonomous rollback, chaos engineering, cloud FinOps, game-day simulation, IaC drift remediation, Kubernetes debugging, multi-cloud governance, performance bottleneck analysis
+- `skills/product/` — Accessibility (WCAG), cognitive load balancing, digital twin planning, human-AI trust architecture
+- `skills/data/` — Agentic RAG evaluation, data poisoning auditing, semantic schema mapping
+- `skills/design/` — Digital twin dashboards, inclusive visuals, whimsy injection, XR spatial interface design
+
+## App categories
+
+- `apps/tools/` — CLI utilities and interactive tools (e.g., `health-coach`: a personal health tracking agent)
+- `apps/dashboards/` — Interactive HTML/React dashboards and reports
+- `apps/automations/` — Scheduled tasks, workflows, and integrations
+
+## Skill file format
+
+Every skill has a `SKILL.md` with required YAML frontmatter:
+
+```yaml
+---
+name: Skill Name
+description: One-line description
+version: "1.0.0"
+author: Author Name
+tags: [domain, category, keywords]
+triggers: [phrases, that, activate, this, skill]
+tools_required: [Read, Write, Bash]  # optional
+---
+```
+
+The body of `SKILL.md` contains the full prompt/instructions Claude will follow when the skill is active.
+
+## Key files
+
+- [README.md](README.md) — overview, quick start, skill/app structure
+- [CONTRIBUTING.md](CONTRIBUTING.md) — branch model, quality standards, PR process
+- [skills/_template/SKILL.md](skills/_template/SKILL.md) — canonical template for new skills
+- [apps/_template/README.md](apps/_template/README.md) — canonical template for new apps
+- [scripts/new-skill.sh](scripts/new-skill.sh) — scaffolds a new skill
+- [scripts/new-app.sh](scripts/new-app.sh) — scaffolds a new app
+- [scripts/lint.sh](scripts/lint.sh) — validates frontmatter and structure before submission
+- [scripts/validate-frontmatter.py](scripts/validate-frontmatter.py) — Python frontmatter validator
+- [scripts/generate-catalog.py](scripts/generate-catalog.py) — generates the skill/app catalog
+
+## Branch model
+
+- `dev` — active development; all PRs must target this branch
+- `main` — stable releases only; periodically merged from `dev`
+
+PRs targeting `main` are automatically closed by CI.
+
+## CI / quality gates
+
+Six GitHub Actions workflows run on every PR:
+
+1. `ci-quality-gate.yml` — full quality gate (frontmatter, lint, broken links)
+2. `lint-skills.yml` — YAML frontmatter linting for skills
+3. `security-audit.yml` — secret scanning, credential detection
+4. `enforce-pr-target.yml` — rejects PRs targeting `main`
+5. `claude-review.yml` — automated Claude code review
+6. `docs-deploy.yml` — deploys MkDocs site on merge to `main`
+
+## How to use a skill
+
+Copy any skill folder into your Claude Code project:
+
+```bash
+cp -r skills/engineering/api-version-migrator ~/.claude/commands/
+```
+
+Or reference it directly in a Cowork session.
+
+## How to contribute
+
+```bash
+git clone https://github.com/smartrus/claude-skills-and-apps.git
+cd claude-skills-and-apps
+git checkout dev
+git checkout -b feat/my-skill
+./scripts/new-skill.sh <domain> <skill-name>
+# edit SKILL.md, then:
+./scripts/lint.sh
+git push -u origin feat/my-skill
+# open PR targeting dev
+```
+
+Requirements: valid YAML frontmatter, no placeholders, no secrets, lint must pass.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
