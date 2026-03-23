@@ -33,7 +33,21 @@ def score_content(content_path, target_format, output_format):
     # - Generate parseability score (0-100)
     # - Provide optimization recommendations
     # - Identify ambiguous passages
-    pass
+
+    return {
+        "file": str(content_path),
+        "target_format": target_format,
+        "score": 0,
+        "breakdown": {
+            "structured_headings": 0,
+            "terminology_consistency": 0,
+            "schema_markup_present": False,
+            "intent_markers": 0,
+        },
+        "recommendations": [
+            "Full scoring logic not yet implemented — stub result only."
+        ],
+    }
 
 
 def main():
