@@ -24,6 +24,19 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 from pathlib import Path
 
 
+# Derived from SKILL.md "Habit Reference" table
+# Module-level constant to avoid reconstructing on every request
+SUPPORTED_HABITS = {
+    "water", "notes",
+    # Nutrition habits
+    "n1", "n2", "n3", "n4", "n5", "n6", "n7",
+    # Exercise habits
+    "e1", "e2", "e3", "e4",
+    # Lifestyle habits (note: "l1" is derived from water intake)
+    "l2", "l3", "l4", "l5",
+}
+
+
 def get_args():
     parser = argparse.ArgumentParser(description="Health habits sync server")
     parser.add_argument("--port", type=int, default=8777, help="Port to listen on")
@@ -187,23 +200,11 @@ class HealthHandler(SimpleHTTPRequestHandler):
                 return
 
             # Validate habit_id against supported values
-            # Derived from skill/SKILL.md "Habit Reference" table
-            SUPPORTED_HABITS = {
-                "water", "notes",
-                # Nutrition habits
-                "n1", "n2", "n3", "n4", "n5", "n6", "n7",
-                # Exercise habits
-                "e1", "e2", "e3", "e4",
-                # Lifestyle habits (note: "l1" is derived from water intake)
-                "l2", "l3", "l4", "l5",
-            }
             if habit_id not in SUPPORTED_HABITS:
-                self._send_json(
-                    {"error": f"Unknown habit_id '{habit_id}'. "
-                     f"Supported: {', '.join(sorted(SUPPORTED_HABITS))}. "
-                     "'l1' is derived from water intake and cannot be set manually."},
-                    400,
-                )
+                msg = f"Unknown habit_id '{habit_id}'. Supported: {', '.join(sorted(SUPPORTED_HABITS))}."
+                if habit_id == "l1":
+                    msg += " 'l1' is derived from water intake and cannot be set manually."
+                self._send_json({"error": msg}, 400)
                 return
 
             data = self._read_data()
