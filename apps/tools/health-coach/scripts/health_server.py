@@ -174,9 +174,15 @@ class HealthHandler(SimpleHTTPRequestHandler):
                 return
 
             # Validate habit_id against supported values
+            # Derived from skill/SKILL.md "Habit Reference" table
             SUPPORTED_HABITS = {
                 "water", "notes",
-                "l2", "l3", "l4", "l5", "l6", "l7", "l8", "l9", "l10",
+                # Nutrition habits
+                "n1", "n2", "n3", "n4", "n5", "n6", "n7",
+                # Exercise habits
+                "e1", "e2", "e3", "e4",
+                # Lifestyle habits (note: "l1" is derived from water intake)
+                "l2", "l3", "l4", "l5",
             }
             if habit_id not in SUPPORTED_HABITS:
                 self._send_json(
