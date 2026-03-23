@@ -27,11 +27,12 @@ def parse_pod_status(describe_output: str) -> Dict[str, Any]:
         Dictionary containing:
         - status: Current pod phase (Running, Pending, Failed, CrashLoopBackOff, etc.)
         - conditions: Dict of pod conditions (Ready, Initialized, etc.)
-        - container_statuses: List of container state info
         - events: List of relevant pod events
         - restart_count: Total container restarts
         - last_state_reason: Reason for last termination
         - exit_code: Exit code from last container termination
+        - image_pull_secret: Name of imagePullSecret if present
+        - volumes: List of volume names
     
     Example input:
         Name:         web-app-7f8b9c6d4-x2k9m
@@ -70,16 +71,26 @@ def parse_pod_status(describe_output: str) -> Dict[str, Any]:
         # Track section transitions
         if stripped.startswith('Last State:'):
             in_last_state = True
+            in_volumes_section = False
+            in_image_pull_secrets = False
         elif stripped.startswith('Volumes:'):
             in_volumes_section = True
+            in_last_state = False
+            in_image_pull_secrets = False
         elif stripped.startswith('Image Pull Secrets:'):
             in_image_pull_secrets = True
+            in_last_state = False
+            in_volumes_section = False
         elif stripped and not line[0].isspace() and ':' in stripped:
             # New top-level section (no leading whitespace in original line) resets context flags
             if not stripped.startswith(('Name:', 'Reason:', 'Exit Code:', 'Restart Count:')):
                 in_last_state = False
                 in_volumes_section = False
                 in_image_pull_secrets = False
+        elif stripped and line[0].isspace() and ':' in stripped:
+            # Indented section header (e.g., "State:", "Ready:") ends Last State block
+            if in_last_state and not stripped.startswith(('Reason:', 'Exit Code:', 'Signal:')):
+                in_last_state = False
 
         if line.startswith('Status:'):
             status_info['status'] = line.split(':', 1)[1].strip()
@@ -148,12 +159,13 @@ def classify_failure(status_info: Dict[str, Any]) -> str:
     
     Returns:
         Failure category string:
-        - pod_lifecycle (CrashLoopBackOff, ImagePullBackOff, CreateContainerError)
-        - oom_killed (exit code 137)
+        - oom_killed (exit code 137 or OOMKilled reason)
+        - image_pull_failed (ImagePullBackOff or image pull events)
+        - pod_lifecycle (CrashLoopBackOff, CreateContainerError)
         - pending (Pending status)
+        - rbac (permission denied / forbidden in events)
         - networking (service/DNS issues inferred from events)
         - storage (PVC/volume issues)
-        - rbac (permission denied in events)
         - unknown
     """
     pod_status = (status_info.get('status') or '').lower()

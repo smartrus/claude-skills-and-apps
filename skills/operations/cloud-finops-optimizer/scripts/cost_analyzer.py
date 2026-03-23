@@ -53,6 +53,14 @@ def analyze_utilization(data: Dict[str, Any], threshold: int) -> Dict[str, Any]:
     }
     
     if "resources" not in data or not data["resources"]:
+        results["summary"] = {
+            "total_resources_analyzed": 0,
+            "idle_count": 0,
+            "underutilized_count": 0,
+            "overprovisioned_count": 0,
+            "healthy_count": 0,
+            "optimization_targets": 0,
+        }
         return results
     
     resources = data["resources"]
