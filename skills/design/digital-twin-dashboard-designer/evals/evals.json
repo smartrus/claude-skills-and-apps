@@ -1,0 +1,31 @@
+{
+  "skill_name": "digital-twin-dashboard-designer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design a real-time dashboard for our factory digital twin. It monitors 50 sensors across 12 machines. I need an overview with health status, anomaly highlighting, and the ability to drill down into individual machine telemetry.",
+      "expected_output": "Dashboard specification including overview layout, health status visualization, anomaly highlighting strategy, drill-down interaction patterns for individual machines, and data refresh rates",
+      "files": [],
+      "expectations": [
+        "Response contains 'real-time' or 'live' data visualization",
+        "Response contains 'drill-down' or hierarchical navigation",
+        "Response contains anomaly or alert visualization",
+        "Response addresses information organization across 12 machines and 50 sensors",
+        "Response includes specific widget or layout recommendations"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Our digital twin dashboard shows too much data and operators miss critical alerts. Redesign the alert hierarchy and visual priority system so the most important anomalies are impossible to miss.",
+      "expected_output": "Alert hierarchy design with severity-based visual priority, attention-grabbing strategies for critical anomalies, information density optimization, and progressive disclosure patterns for detailed telemetry",
+      "files": [],
+      "expectations": [
+        "Response contains 'alert hierarchy' or 'visual priority'",
+        "Response contains information density or cognitive load consideration",
+        "Response references progressive disclosure or severity-based design",
+        "Response suggests attention-grabbing mechanisms for critical alerts",
+        "Response does NOT recommend excessive data display"
+      ]
+    }
+  ]
+}

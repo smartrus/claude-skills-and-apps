@@ -1,0 +1,27 @@
+{
+  "skill_name": "agentic-rag-evaluator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Our RAG pipeline is returning answers that don't match the source documents. Evaluate these 10 query-context-answer triples and flag any where the answer contains claims not supported by the retrieved context.",
+      "expected_output": "Evaluation report with flagged unsupported claims, list of hallucinated content, and grounding assessment for each query-answer pair",
+      "files": [],
+      "expectations": [
+        "Response contains 'hallucination' or 'unsupported' or 'grounding'",
+        "Response contains evaluation per query or per triple",
+        "Response references source document comparison"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Audit our RAG retrieval quality. I need to know: are we retrieving relevant chunks? Are there conflicts between sources? Is the context sufficient for the questions being asked?",
+      "expected_output": "Comprehensive audit report covering relevance assessment, source conflict detection, and context sufficiency analysis",
+      "files": [],
+      "expectations": [
+        "Response contains 'relevance' or 'relevant'",
+        "Response contains 'conflict' or 'contradiction' or 'source'",
+        "Response references completeness or sufficiency of context"
+      ]
+    }
+  ]
+}

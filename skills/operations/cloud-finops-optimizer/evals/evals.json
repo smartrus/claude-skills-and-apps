@@ -1,0 +1,41 @@
+{
+  "skill_name": "cloud-finops-optimizer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Our AWS bill jumped 40% this quarter. I have CloudWatch metrics showing most of our EC2 instances are running at under 15% CPU utilization across the us-east-1 region. We're running a mix of m5.2xlarge and c5.4xlarge instances for our microservices. Can you analyze and recommend rightsizing?",
+      "expected_output": "A rightsizing analysis with specific instance type recommendations, cost comparison, and Terraform patch",
+      "files": [],
+      "expectations": [
+        "Response contains the word 'rightsizing' or 'right-sizing'",
+        "Response contains a recommendation table or structured list of instance changes",
+        "Response references specific instance types (e.g., m5, c5, or alternative families)",
+        "Response does NOT suggest terminating or deleting instances without explicit user confirmation"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "We're running workloads on both AWS and GCP. I need a cost optimization report that covers idle load balancers on AWS, unattached EBS volumes in us-west-2, and oversized GCE n2-standard-8 instances in our GCP analytics project that are averaging 10% CPU.",
+      "expected_output": "Multi-cloud cost optimization report addressing all three resource categories with savings estimates",
+      "files": [],
+      "expectations": [
+        "Response addresses both AWS and GCP resources",
+        "Response mentions 'EBS volumes' or 'Elastic Block Store'",
+        "Response mentions 'load balancers' or 'ELB' or 'ALB'",
+        "Response includes a cost-saving estimate or methodology for calculating savings"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "We have 50 on-demand m5.xlarge instances running 24/7 for our batch processing cluster. They've been running consistently for 6 months with no plans to decommission. Should we convert to reserved instances or savings plans? What's the expected break-even point and total savings over 1 and 3 years?",
+      "expected_output": "Reserved instance vs savings plan comparison with break-even analysis and commitment risk warnings",
+      "files": [],
+      "expectations": [
+        "Response contains 'reserved instance' or 'Reserved Instance' or 'RI'",
+        "Response contains 'savings plan' or 'Savings Plan'",
+        "Response includes a cost comparison or break-even calculation",
+        "Response warns about commitment risk, lock-in, or inflexibility of reservations"
+      ]
+    }
+  ]
+}

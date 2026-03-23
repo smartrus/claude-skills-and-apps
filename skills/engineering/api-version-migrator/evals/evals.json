@@ -1,0 +1,29 @@
+{
+  "skill_name": "api-version-migrator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We need to upgrade our codebase from Django 3.2 to Django 5.0. Can you identify all the breaking changes that affect our project and create a migration plan?",
+      "expected_output": "Analysis of breaking changes between Django 3.2 and 5.0 with step-by-step migration plan",
+      "files": [],
+      "expectations": [
+        "Response contains 'breaking change' or 'deprecated'",
+        "Response contains migration plan or step-by-step instructions",
+        "Response references specific Django version numbers (3.2 and 5.0)",
+        "Response does NOT suggest starting a new project from scratch"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Our team is migrating from AWS SDK v2 to v3 for JavaScript. Scan our source directory and identify all API calls that need to change.",
+      "expected_output": "List of API changes and migration steps from AWS SDK v2 to v3",
+      "files": [],
+      "expectations": [
+        "Response contains 'import' or 'require' or 'API call'",
+        "Response references 'v2' and 'v3' versions",
+        "Response contains a list or table of changes needed",
+        "Response does NOT conflate other AWS service migrations"
+      ]
+    }
+  ]
+}

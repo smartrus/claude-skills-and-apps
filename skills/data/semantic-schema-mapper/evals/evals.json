@@ -1,0 +1,27 @@
+{
+  "skill_name": "semantic-schema-mapper",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We're migrating from a 20-year-old Oracle database to a modern PostgreSQL schema. Columns like cust_nm, ord_dt, shp_addr_ln1 need to be mapped to our canonical data model. Generate the mapping and transformation DDL.",
+      "expected_output": "Schema mapping with confidence scores, DDL statements for table creation/alteration, and ETL transformation logic for the specified columns",
+      "files": [],
+      "expectations": [
+        "Response contains 'mapping' or 'mapped'",
+        "Response contains SQL DDL or ALTER/CREATE TABLE or transformation logic",
+        "Response references specific column name examples like cust_nm or ord_dt"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Our legacy system has 500 columns with cryptic abbreviated names. Map them to our modern schema using semantic similarity and generate a confidence-scored mapping report.",
+      "expected_output": "Structured mapping report with confidence scores for each column mapping, summary statistics, and recommendations for high-confidence vs low-confidence mappings",
+      "files": [],
+      "expectations": [
+        "Response contains 'confidence' or 'score' or 'similarity'",
+        "Response contains structured mapping output (table or list format)",
+        "Response does NOT show mappings without confidence levels or scores"
+      ]
+    }
+  ]
+}

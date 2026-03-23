@@ -1,0 +1,43 @@
+{
+  "skill_name": "chaos-engineering-tuner",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design a chaos experiment that simulates a sudden 10x traffic spike to our API gateway while simultaneously killing 30% of our backend pods to verify our HPA and cluster autoscaler can handle it.",
+      "expected_output": "Comprehensive chaos experiment design combining traffic spike injection and pod termination, with proper blast radius controls and safety mechanisms. Should include specific HPA and autoscaler verification criteria.",
+      "files": [],
+      "expectations": [
+        "Response contains 'HPA' or 'Horizontal Pod Autoscaler' or 'autoscaler'",
+        "Response contains pod termination, fault injection, or pod kill methodology",
+        "Response mentions blast radius, safety controls, or rollback criteria",
+        "Response addresses both traffic spike and pod failure scenarios",
+        "Response does NOT suggest chaos without recovery mechanisms"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "We need to verify our system can survive an AWS us-east-1 regional failure. Create a chaos experiment configuration that progressively degrades the region's services.",
+      "expected_output": "Phased chaos experiment design simulating gradual regional failure with progressive service degradation. Should include blast radius controls and abort criteria.",
+      "files": [],
+      "expectations": [
+        "Response contains 'progressive', 'gradual', 'phased', or 'staged'",
+        "Response references regional failure simulation or zone failure",
+        "Response includes rollback, abort, or safety criteria",
+        "Response explains degradation strategy or failure cascade",
+        "Response does NOT suggest all-at-once failure without gradual approach"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "We want to run a gameday exercise where we inject multiple simultaneous failures to test our incident response procedures. What resilience chaos experiments should we design?",
+      "expected_output": "Design of resilience testing scenarios combining multiple failure modes to verify system recovery and team response procedures.",
+      "files": [],
+      "expectations": [
+        "Response addresses gameday or resilience testing context",
+        "Response suggests multiple failure scenarios or combinations",
+        "Response includes safety measures and blast radius controls",
+        "Response references resilience scorecards or outcome metrics"
+      ]
+    }
+  ]
+}

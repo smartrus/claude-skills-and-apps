@@ -1,0 +1,43 @@
+{
+  "skill_name": "multicloud-governance-enforcer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We need to enforce HIPAA compliance across our AWS and GCP environments. Generate OPA policies that ensure all S3 buckets and GCS buckets have encryption enabled, access logging turned on, and no public access.",
+      "expected_output": "OPA/Rego policy files implementing HIPAA-compliant storage configurations across AWS (S3) and GCP (GCS). Should include encryption requirements, access logging enforcement, and public access prevention.",
+      "files": [],
+      "expectations": [
+        "Response contains 'OPA' or 'Rego' or 'Open Policy Agent'",
+        "Response references both 'S3' and 'GCS' or 'Cloud Storage'",
+        "Response contains 'encryption' and 'public access' or 'public'",
+        "Response includes policy enforcement mechanisms or deny rules",
+        "Response does NOT generate invalid Rego syntax"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Create a GDPR data residency compliance policy that prevents any resource from being provisioned outside EU regions across all three major cloud providers.",
+      "expected_output": "Compliance-as-code policies enforcing GDPR data residency requirements across AWS, GCP, and Azure. Should prevent non-EU resource provisioning and include geographic restriction validation.",
+      "files": [],
+      "expectations": [
+        "Response contains 'GDPR' or 'data residency' or 'regional restriction'",
+        "Response references EU regions or geographic constraints",
+        "Response addresses at least two cloud providers (AWS, GCP, Azure)",
+        "Response includes policy rules or enforcement mechanisms",
+        "Response does NOT allow non-EU provisioning in GDPR policies"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Generate Sentinel policies for PCI-DSS compliance that enforce encryption, access controls, and audit logging across our Terraform-managed infrastructure.",
+      "expected_output": "Terraform Sentinel policy rules implementing PCI-DSS controls including encryption enforcement, access control validation, and audit logging requirements.",
+      "files": [],
+      "expectations": [
+        "Response contains 'Sentinel' or 'Terraform Sentinel'",
+        "Response contains 'PCI-DSS' or 'PCI'",
+        "Response includes encryption, access control, and audit logging",
+        "Response generates valid Sentinel policy syntax or Rego rules"
+      ]
+    }
+  ]
+}

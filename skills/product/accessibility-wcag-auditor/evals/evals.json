@@ -1,0 +1,27 @@
+{
+  "skill_name": "accessibility-wcag-auditor",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Audit this React component library for WCAG 2.2 AA compliance. Check all interactive components for keyboard navigation, ARIA labels, color contrast, and focus management.",
+      "expected_output": "Comprehensive accessibility audit report identifying violations in keyboard navigation, ARIA attributes, color contrast ratios, and focus management with prioritized remediation steps",
+      "files": [],
+      "expectations": [
+        "Response contains 'WCAG' or 'wcag'",
+        "Response contains at least three of: 'contrast', 'ARIA', 'keyboard', 'focus'",
+        "Response contains violation list or remediation steps"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Our login form fails accessibility testing. The error messages aren't announced to screen readers, the submit button has insufficient color contrast, and there's no visible focus indicator. Generate specific code fixes.",
+      "expected_output": "Specific code remediation recommendations including ARIA live region implementation for error messages, CSS fixes for color contrast, and focus indicator styling with exact values or code examples",
+      "files": [],
+      "expectations": [
+        "Response contains 'aria-live' or 'aria-describedby' or 'screen reader'",
+        "Response contains contrast ratio or color fix",
+        "Response contains focus indicator or outline fix"
+      ]
+    }
+  ]
+}

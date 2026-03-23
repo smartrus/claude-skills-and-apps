@@ -1,0 +1,31 @@
+{
+  "skill_name": "xr-spatial-interface-architect",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design the spatial UI for a VR medical training application. Surgeons need to select tools from a spatial menu, manipulate 3D organ models with hand gestures, and receive haptic feedback on collision. Spec the interaction model.",
+      "expected_output": "Comprehensive interaction design specification including spatial menu layout, hand gesture vocabulary for tool selection and manipulation, haptic feedback mapping for collision detection, and ergonomic positioning considerations",
+      "files": [],
+      "expectations": [
+        "Response contains 'hand gesture' or 'gesture vocabulary'",
+        "Response contains 'spatial menu' or '3D UI'",
+        "Response references comfort or ergonomic considerations",
+        "Response does NOT suggest 2D interface patterns",
+        "Response addresses haptic or tactile feedback"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Create an AR interface design for a warehouse picking application on HoloLens. Workers need hands-free interaction, gaze-based selection, and spatial waypoint navigation overlaid on the real environment.",
+      "expected_output": "AR-specific interaction design with hands-free gesture patterns, gaze targeting and dwell time specifications, spatial waypoint visualization overlaid on warehouse environment, and worker safety considerations",
+      "files": [],
+      "expectations": [
+        "Response contains 'gaze' or 'hands-free'",
+        "Response contains 'waypoint' or 'navigation' or 'spatial overlay'",
+        "Response references HoloLens or AR-specific constraints",
+        "Response addresses worker safety or real-world integration",
+        "Response does NOT focus on game design or entertainment"
+      ]
+    }
+  ]
+}

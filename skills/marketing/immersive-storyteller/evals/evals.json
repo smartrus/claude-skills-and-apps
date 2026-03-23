@@ -1,0 +1,29 @@
+{
+  "skill_name": "immersive-storyteller",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Design an immersive VR brand experience for our sustainability initiative. Users should walk through a virtual forest that shows the impact of deforestation, then see our reforestation efforts. Plan the narrative arc and interaction points.",
+      "expected_output": "Detailed immersive narrative plan including scene-by-scene environment design, user journey through forest ecosystem, interaction triggers for learning moments, branching narrative options, spatial audio cues, and presence-focused design elements for VR.",
+      "files": [],
+      "expectations": [
+        "Response contains 'scene' or 'environment' or 'spatial' or 'immersive'",
+        "Response contains interaction point or trigger description",
+        "Response references narrative arc or story structure progression",
+        "Response includes environmental or spatial storytelling elements"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Create an AR product experience where customers can see how our furniture looks in their room with an integrated brand story. Plan the narrative flow and interaction triggers.",
+      "expected_output": "AR-specific narrative and interaction design including real-world integration strategy, spatial anchoring narrative, user interaction triggers for brand storytelling, and progressive revelation of product and brand story through spatial interactions.",
+      "files": [],
+      "expectations": [
+        "Response contains 'AR' or 'augmented reality' or 'real-world'",
+        "Response contains spatial or environmental narrative element",
+        "Response references user interaction or trigger points",
+        "Response includes brand storytelling integrated with product placement"
+      ]
+    }
+  ]
+}

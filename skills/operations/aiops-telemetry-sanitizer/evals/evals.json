@@ -1,0 +1,42 @@
+{
+  "skill_name": "aiops-telemetry-sanitizer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Our AIOps agent is making erratic decisions. We suspect someone is embedding prompt injections in our application logs to manipulate the LLM-based alerting system. Can you scan and sanitize our telemetry pipeline?",
+      "expected_output": "Comprehensive scanning of telemetry logs for prompt injection patterns, suspicious Unicode sequences, and encoded payloads that could manipulate LLM systems. Output should include sanitization report with patterns detected and remediation recommendations.",
+      "files": [],
+      "expectations": [
+        "Response contains 'prompt injection' or 'injection pattern'",
+        "Response contains 'sanitize' or 'cleanse' or 'filter'",
+        "Response references log scanning or pattern matching methodology",
+        "Response does NOT suggest disabling AIOps monitoring entirely"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Scan this log stream for base64-encoded payloads and suspicious Unicode sequences that could be used for reward hacking in our automated incident response system.",
+      "expected_output": "Detection methodology for encoded payloads and suspicious Unicode characters. Should explain how to identify base64-encoded content, unusual Unicode sequences, and recommend filtering strategies.",
+      "files": [],
+      "expectations": [
+        "Response contains 'base64' or 'encoded' or 'encoding'",
+        "Response contains 'Unicode' or 'character encoding' or 'suspicious characters'",
+        "Response references detection or scanning methodology",
+        "Response explains reward hacking risks or automated system manipulation",
+        "Response does NOT provide obfuscation techniques"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "We need to defend our observability system against adversarial log injection. What patterns should we monitor for in our telemetry streams?",
+      "expected_output": "List of injection patterns, adversarial techniques, and detection strategies specific to log-based attacks on LLM systems.",
+      "files": [],
+      "expectations": [
+        "Response contains specific injection patterns or attack vectors",
+        "Response addresses observability or telemetry systems",
+        "Response includes detection patterns or rules",
+        "Response does NOT trigger for general log aggregation or SIEM setup"
+      ]
+    }
+  ]
+}

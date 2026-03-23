@@ -1,0 +1,27 @@
+{
+  "skill_name": "digital-twin-planner",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We're building a digital twin of our manufacturing floor. It has 12 CNC machines, 3 robotic arms, and 2 conveyor systems. Generate the twin specification including sensor requirements and simulation parameters.",
+      "expected_output": "Digital twin specification document with detailed sensor mapping (types, frequencies, locations), simulation parameters, and operational models for the manufacturing components",
+      "files": [],
+      "expectations": [
+        "Response contains 'sensor' or 'telemetry'",
+        "Response contains simulation parameters or model specification",
+        "Response references specific physical components"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Design a predictive maintenance model for our wind turbine fleet using digital twin methodology. Define what sensor data we need, failure prediction intervals, and simulation scenarios.",
+      "expected_output": "Predictive maintenance framework including required sensor data specifications, failure prediction methodology, simulation scenarios, and maintenance scheduling recommendations",
+      "files": [],
+      "expectations": [
+        "Response contains 'predictive maintenance' or 'failure prediction'",
+        "Response contains sensor data requirements",
+        "Response references simulation or modeling approach"
+      ]
+    }
+  ]
+}
