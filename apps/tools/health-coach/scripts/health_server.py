@@ -173,6 +173,14 @@ class HealthHandler(SimpleHTTPRequestHandler):
                 )
                 return
 
+            # Ensure habit_id is a string before set membership to avoid TypeError
+            if not isinstance(habit_id, str):
+                self._send_json(
+                    {"error": "Invalid habit_id; expected string"}, 400
+                )
+                return
+            habit_id = habit_id.strip()
+
             # Validate habit_id against supported values
             # Derived from skill/SKILL.md "Habit Reference" table
             SUPPORTED_HABITS = {
