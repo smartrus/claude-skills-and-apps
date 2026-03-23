@@ -53,12 +53,20 @@ def scan_for_unicode_anomalies(line):
         List of suspicious Unicode characters found
     """
     suspicious = []
+    # Specific bidi/control ranges that are known injection vectors.
+    # Avoids false positives on legitimate emoji, CJK, and non-Latin text.
+    SUSPICIOUS_RANGES = (
+        (0x0080, 0x009F),   # C1 control characters
+        (0x200E, 0x200F),   # LRM / RLM directional marks
+        (0x202A, 0x202E),   # Bidi embedding/override (LRE, RLE, PDF, LRO, RLO)
+        (0x2066, 0x2069),   # Bidi isolate controls (LRI, RLI, FSI, PDI)
+    )
     for char in line:
         code = ord(char)
-        if code > 127 and code < 160:  # Control characters
-            suspicious.append(f'U+{code:04X}')
-        if code > 0x202E:  # Right-to-left override and similar
-            suspicious.append(f'U+{code:04X}')
+        for low, high in SUSPICIOUS_RANGES:
+            if low <= code <= high:
+                suspicious.append(f'U+{code:04X}')
+                break
     return suspicious
 
 

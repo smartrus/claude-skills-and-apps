@@ -173,6 +173,20 @@ class HealthHandler(SimpleHTTPRequestHandler):
                 )
                 return
 
+            # Validate habit_id against supported values
+            SUPPORTED_HABITS = {
+                "water", "notes",
+                "l2", "l3", "l4", "l5", "l6", "l7", "l8", "l9", "l10",
+            }
+            if habit_id not in SUPPORTED_HABITS:
+                self._send_json(
+                    {"error": f"Unknown habit_id '{habit_id}'. "
+                     f"Supported: {', '.join(sorted(SUPPORTED_HABITS))}. "
+                     "'l1' is derived from water intake and cannot be set manually."},
+                    400,
+                )
+                return
+
             data = self._read_data()
             if date not in data:
                 data[date] = {"habits": {}, "water": 0, "notes": ""}
