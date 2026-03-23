@@ -1,0 +1,27 @@
+{
+  "skill_name": "human-ai-trust-architect",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We're deploying an AI system that approves loan applications autonomously. Design the trust architecture: what explanations do we show applicants, what audit logs do we keep, and when should a human override be triggered?",
+      "expected_output": "Trust architecture framework including explanation templates for loan decisions, comprehensive audit logging requirements, human override protocols and triggers, and confidence-based escalation rules",
+      "files": [],
+      "expectations": [
+        "Response contains 'explanation' or 'explainability'",
+        "Response contains 'audit log' or 'logging'",
+        "Response contains 'override' or 'human-in-the-loop' or 'escalation'"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Our autonomous trading system needs a confidence-calibration framework. When the AI's confidence drops below a threshold, it should defer to a human trader. Design the trust boundaries and handoff protocol.",
+      "expected_output": "Confidence-calibration framework with specific thresholds, human-AI handoff protocols, decision boundary definitions, and escalation procedures for uncertain trading scenarios",
+      "files": [],
+      "expectations": [
+        "Response contains 'confidence' and ('threshold' or 'calibration')",
+        "Response contains handoff or deferral protocol",
+        "Response references trust boundary or decision boundary"
+      ]
+    }
+  ]
+}

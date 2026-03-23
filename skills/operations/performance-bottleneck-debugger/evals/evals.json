@@ -1,0 +1,43 @@
+{
+  "skill_name": "performance-bottleneck-debugger",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Our checkout API p99 latency jumped from 200ms to 2 seconds. I have Jaeger traces showing the request passes through 8 microservices. Help me find which service is the bottleneck.",
+      "expected_output": "Systematic analysis of distributed trace data to identify the microservice with the highest latency contribution. Should examine span durations, critical path analysis, and root cause determination.",
+      "files": [],
+      "expectations": [
+        "Response contains 'trace' or 'span' or 'Jaeger'",
+        "Response contains 'latency' or 'duration' or 'p99'",
+        "Response references dependency graph, critical path, or service isolation",
+        "Response identifies specific microservice or root cause",
+        "Response does NOT suggest random scaling without diagnosis"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Analyze these OpenTelemetry traces. The payment-service shows intermittent 500ms spikes that only happen when inventory-service is under load. Is there a causal relationship?",
+      "expected_output": "Correlation and causal analysis of trace data showing relationship between inventory-service load and payment-service latency. Should explain dependency patterns and potential bottleneck mechanisms.",
+      "files": [],
+      "expectations": [
+        "Response contains 'correlation' or 'causal' or 'dependency' or 'relationship'",
+        "Response references timing analysis, span comparison, or trace correlation",
+        "Response explains how one service impacts another",
+        "Response suggests investigation methodology or root cause",
+        "Response does NOT suggest scaling all services equally"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Our search API is slow. We have distributed traces but 50 different services are involved. How do we identify which one is actually causing the latency?",
+      "expected_output": "Methodology for bottleneck identification in complex service meshes using trace analysis, dependency graphs, and latency attribution.",
+      "files": [],
+      "expectations": [
+        "Response addresses large-scale microservices environments",
+        "Response explains critical path analysis or dependency graphing",
+        "Response provides systematic debugging methodology",
+        "Response mentions trace analysis or span duration analysis"
+      ]
+    }
+  ]
+}

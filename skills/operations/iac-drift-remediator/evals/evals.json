@@ -1,0 +1,41 @@
+{
+  "skill_name": "iac-drift-remediator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Someone manually created an S3 bucket called 'prod-data-lake-2024' in the AWS console and now we need it managed by our Terraform. We already have an aws_s3_bucket resource block ready in our main.tf but it's not in the state. How do I import it without disrupting the 47 other resources in our state?",
+      "expected_output": "Step-by-step terraform import procedure with state backup and verification",
+      "files": [],
+      "expectations": [
+        "Response contains 'terraform import'",
+        "Response contains 'terraform state' or references state operations",
+        "Response includes the specific bucket name 'prod-data-lake-2024'",
+        "Response mentions backing up state file or 'terraform state pull' before operations"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Our terraform plan is showing it wants to destroy and recreate our production RDS instance (db.r5.xlarge -> db.r5.2xlarge) because someone changed the instance class in the AWS console. This is a production database with 2TB of data. How do I fix the state to match reality without any downtime or data loss?",
+      "expected_output": "Remediation plan that updates state without destroying the RDS instance",
+      "files": [],
+      "expectations": [
+        "Response contains a 'terraform state' command or state manipulation approach",
+        "Response does NOT recommend running 'terraform apply' without explicit warning about the destroy/recreate risk",
+        "Response addresses the instance class mismatch (db.r5.xlarge vs db.r5.2xlarge)",
+        "Response mentions a rollback plan or recovery procedure"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "We're getting 'Error: Failed to load state: the state file could not be parsed as JSON' when running terraform plan. Our state backend is S3 with DynamoDB locking in us-east-1. The last successful apply was 3 days ago. How do we recover?",
+      "expected_output": "State recovery procedure using S3 versioning and state lock management",
+      "files": [],
+      "expectations": [
+        "Response mentions S3 versioning or recovering a previous state version",
+        "Response contains 'terraform state pull' or references state backup/recovery mechanism",
+        "Response warns about or addresses the DynamoDB state lock",
+        "Response provides a step-by-step recovery procedure with numbered steps or clear sequence"
+      ]
+    }
+  ]
+}

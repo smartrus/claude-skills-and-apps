@@ -1,0 +1,31 @@
+{
+  "skill_name": "inclusive-visuals-specialist",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We're generating AI images for our website. Audit these 20 image prompts for representation diversity. Flag any that default to young, able-bodied, light-skinned subjects and suggest inclusive alternatives.",
+      "expected_output": "Diversity audit report analyzing representation across skin tone, age, ability, and gender dimensions, with specific flags for problematic prompts and inclusive alternative prompt suggestions",
+      "files": [],
+      "expectations": [
+        "Response contains 'representation' or 'diversity'",
+        "Response contains specific dimension analysis (skin tone, age, ability, or gender)",
+        "Response contains alternative prompt suggestions",
+        "Response flags stereotyping or homogeneous defaults",
+        "Response does NOT perpetuate harmful generalizations"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Create inclusive image generation prompts for our healthcare app. We need visuals showing patients of diverse ages, skin tones, body types, and abilities interacting with medical professionals.",
+      "expected_output": "Set of inclusive image generation prompts with explicit diversity specifications, multiple examples for different patient demographics, and guidance on avoiding stereotyping in healthcare contexts",
+      "files": [],
+      "expectations": [
+        "Response contains specific diversity dimensions in prompt language",
+        "Response does NOT default to stereotypical representations",
+        "Response contains multiple diverse prompt examples",
+        "Response addresses healthcare-specific representation concerns",
+        "Response includes guidance on authenticity and avoiding tokenism"
+      ]
+    }
+  ]
+}

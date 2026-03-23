@@ -1,0 +1,27 @@
+{
+  "skill_name": "cognitive-load-balancer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "My engineering team is burned out from constant context switching. We have 15 active tasks across 4 different projects. Analyze the task dependencies and suggest a reorganization that minimizes cognitive overhead.",
+      "expected_output": "Analysis of task dependencies with recommendations for reorganizing work to reduce context switching and minimize cognitive fatigue through task batching or project-focused assignment strategies",
+      "files": [],
+      "expectations": [
+        "Response contains 'context switch' or 'context-switching'",
+        "Response contains reorganization or reordering recommendation",
+        "Response references task grouping or batching strategy"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Calculate the cognitive load score for each team member based on their current task assignments. Factor in meeting interruptions, cross-project dependencies, and focus-time fragmentation.",
+      "expected_output": "Per-member cognitive load scores with analysis of contributing factors (interruptions, dependencies, fragmentation) and recommendations for load rebalancing",
+      "files": [],
+      "expectations": [
+        "Response contains 'cognitive load' and 'score'",
+        "Response contains per-person or per-member analysis",
+        "Response references interruptions or fragmentation"
+      ]
+    }
+  ]
+}

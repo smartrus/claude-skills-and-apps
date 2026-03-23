@@ -1,0 +1,41 @@
+{
+  "skill_name": "k8s-debugger",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "My pod in the payments namespace keeps restarting. Here's what I see:\n\nkubectl get pod payments-api-7f8b9c6d4-x2k9m -n payments\nNAME                            READY   STATUS             RESTARTS   AGE\npayments-api-7f8b9c6d4-x2k9m   0/1     CrashLoopBackOff   14         47m\n\nkubectl describe pod shows: Last State: Terminated, Reason: OOMKilled, Exit Code: 137. The container has memory limit set to 256Mi.",
+      "expected_output": "Triage identifying OOMKilled as root cause with memory limit increase recommendation",
+      "files": [],
+      "expectations": [
+        "Response identifies OOMKilled or exit code 137 as indicating an out-of-memory condition",
+        "Response contains 'kubectl logs' command for the payments namespace",
+        "Response suggests increasing memory limits or checking for memory leaks",
+        "Response includes a specific remediation step (e.g., patching the deployment resource limits)"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Just deployed auth-service v2.3.1 to our EKS cluster but all pods are stuck in ImagePullBackOff:\n\nEvents:\n  Warning  Failed  2m  kubelet  Failed to pull image 'auth-service:v2.3.1': rpc error: code = Unknown desc = Error response from daemon: pull access denied for auth-service, repository does not exist or may require 'docker login'\n\nWe use a private ECR registry at 123456789.dkr.ecr.us-east-1.amazonaws.com",
+      "expected_output": "Diagnosis pointing to ECR authentication with image pull secret fix",
+      "files": [],
+      "expectations": [
+        "Response mentions image pull secret or imagePullSecrets or registry authentication",
+        "Response contains 'kubectl describe' or 'kubectl get events' command",
+        "Response references ECR or Elastic Container Registry",
+        "Response provides a step-by-step fix (e.g., creating/updating pull secret, checking image URI)"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Created a PersistentVolumeClaim for our PostgreSQL StatefulSet on EKS but it's stuck in Pending for 20 minutes:\n\nkubectl describe pvc postgres-data-0 -n database\nEvents:\n  Normal  WaitForFirstConsumer  20m  persistentvolume-controller  waiting for first consumer to be created before binding\n\nStorageClass is gp3 with volumeBindingMode: WaitForFirstConsumer",
+      "expected_output": "Explanation of WaitForFirstConsumer behavior and verification steps",
+      "files": [],
+      "expectations": [
+        "Response mentions 'WaitForFirstConsumer' or volume binding mode",
+        "Response contains 'kubectl describe' command for the PVC or StorageClass",
+        "Response mentions StorageClass or 'gp3'",
+        "Response explains that binding waits until a pod using the PVC is scheduled"
+      ]
+    }
+  ]
+}

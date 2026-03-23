@@ -1,0 +1,29 @@
+{
+  "skill_name": "ai-citation-strategist",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Our blog posts rank well on Google but never get cited by ChatGPT or Perplexity. Analyze our content strategy and tell us how to optimize for AI answer engines.",
+      "expected_output": "Strategic analysis of content structure improvements needed for Answer Engine Optimization, including recommendations for schema markup, authority signals, and citation-friendly formatting.",
+      "files": [],
+      "expectations": [
+        "Response contains 'AEO' or 'Answer Engine Optimization' or 'answer engine'",
+        "Response contains structured data or schema markup recommendation",
+        "Response references citation or sourcing by AI",
+        "Response does NOT focus only on traditional SEO metrics like keywords or backlinks"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Audit this product documentation page for AI-citability. Check if the structure, claims, and markup make it easy for generative AI systems to extract and cite our content.",
+      "expected_output": "Comprehensive audit report identifying documentation structure, authority signals, schema markup presence, claim extractability, and recommendations for improving AI citation potential.",
+      "files": [],
+      "expectations": [
+        "Response contains 'structured' or 'schema' or 'markup'",
+        "Response contains factual claim or authority signal assessment",
+        "Response does NOT focus only on traditional SEO metrics",
+        "Response includes specific improvements for AI-friendly formatting"
+      ]
+    }
+  ]
+}

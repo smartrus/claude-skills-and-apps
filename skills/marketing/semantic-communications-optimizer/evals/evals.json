@@ -1,0 +1,29 @@
+{
+  "skill_name": "semantic-communications-optimizer",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Our product descriptions need to work for both human customers and AI shopping agents. Optimize the content structure so AI agents can extract product specs, pricing, and availability programmatically.",
+      "expected_output": "Semantic content optimization strategy with structured data recommendations, machine-readable formatting guidelines, and examples of how to encode product information for both human and AI audiences.",
+      "files": [],
+      "expectations": [
+        "Response contains 'structured data' or 'JSON-LD' or 'schema.org'",
+        "Response contains machine-readable or parseable recommendation",
+        "Response references both human and machine audiences",
+        "Response does NOT focus only on traditional copywriting"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Restructure our API changelog so that AI-powered developer tools can automatically parse breaking changes, deprecations, and migration instructions.",
+      "expected_output": "Semantic changelog structure with machine-parseable formatting, consistent terminology markers, migration path encoding, and recommendations for API documentation machine-readability.",
+      "files": [],
+      "expectations": [
+        "Response contains 'structured' or 'parseable' or 'machine-readable'",
+        "Response references changelog or versioning format",
+        "Response contains semantic markup or consistent format recommendation",
+        "Response includes intent markers for parsing breaking changes"
+      ]
+    }
+  ]
+}

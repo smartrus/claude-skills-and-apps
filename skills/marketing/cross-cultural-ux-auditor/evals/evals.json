@@ -1,0 +1,29 @@
+{
+  "skill_name": "cross-cultural-ux-auditor",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We're launching our SaaS product in Japan, Brazil, and Saudi Arabia. Audit our UI for cultural issues: color meanings, icon interpretations, layout assumptions, and imagery representation.",
+      "expected_output": "Region-specific cultural audit identifying color symbolism mismatches, icon gesture interpretation issues, directional/layout assumptions, and representation gaps with targeted recommendations for each market.",
+      "files": [],
+      "expectations": [
+        "Response contains 'color' and cultural context or region-specific meaning",
+        "Response references at least two of the target regions (Japan, Brazil, Saudi Arabia)",
+        "Response contains specific cultural adaptation recommendations",
+        "Response addresses icon, layout, or imagery concerns per region"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Review our marketing landing page for cultural bias. We use thumbs-up icons, a red 'Buy Now' button, and stock photos of only Western-presenting people. Flag issues for a global audience.",
+      "expected_output": "Cultural bias audit identifying gesture interpretation issues (thumbs-up in Middle East), color symbolism concerns (red meanings vary by region), representation gaps, and inclusive design recommendations for global audiences.",
+      "files": [],
+      "expectations": [
+        "Response contains gesture or icon cultural interpretation",
+        "Response references color symbolism differences across cultures",
+        "Response contains representation, diversity, or inclusivity recommendation",
+        "Response does NOT just focus on general design critique"
+      ]
+    }
+  ]
+}

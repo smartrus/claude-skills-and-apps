@@ -1,0 +1,43 @@
+{
+  "skill_name": "autonomous-rollback-orchestrator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Our canary deployment's error rate just hit 5%, exceeding our 1% SLO. Design an automated rollback pipeline that triggers when error rate, latency p99, or saturation breach their thresholds.",
+      "expected_output": "Detailed design of an automated rollback orchestration system with metric-based triggers, decision logic, and execution strategy. Should include SLO breach detection, threshold configuration, and rollback procedures.",
+      "files": [],
+      "expectations": [
+        "Response contains 'SLO' or 'Service Level Objective'",
+        "Response contains 'rollback' and ('trigger' or 'threshold' or 'breach')",
+        "Response includes decision tree, flowchart, or clear decision criteria",
+        "Response addresses error rate, latency, or saturation metrics",
+        "Response does NOT suggest manual incident response as primary mechanism"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Create a rollback decision matrix for our microservices platform. I need different rollback strategies for different severity levels — full rollback for critical, partial for degraded, and traffic shift for latency issues.",
+      "expected_output": "A comprehensive rollback strategy matrix mapping severity levels to appropriate remediation actions. Should differentiate between full rollback, partial rollback, traffic shifting, and other mitigation techniques.",
+      "files": [],
+      "expectations": [
+        "Response contains 'severity' or 'levels' or 'critical'",
+        "Response contains at least two distinct rollback strategies",
+        "Response references health metrics, error rates, or latency indicators",
+        "Response includes rollback decision criteria or confidence scoring",
+        "Response does NOT suggest one-size-fits-all rollback strategy"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "We want to implement autonomous remediation with human checkpoints. How should we design the rollback orchestrator to respect human-in-the-loop requirements while minimizing MTTR?",
+      "expected_output": "Design approach for autonomous rollback with human oversight, addressing automation vs. manual control, approval workflows, and safety mechanisms.",
+      "files": [],
+      "expectations": [
+        "Response addresses 'human-in-the-loop' or approval mechanisms",
+        "Response references MTTR (Mean Time To Recovery) optimization",
+        "Response balances automation with human control",
+        "Response includes safety/rollback abort criteria"
+      ]
+    }
+  ]
+}

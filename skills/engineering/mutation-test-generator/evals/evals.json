@@ -1,0 +1,29 @@
+{
+  "skill_name": "mutation-test-generator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to evaluate how strong our test suite is for the payment processing module. Can you run mutation testing and tell me which mutations survive?",
+      "expected_output": "Mutation testing analysis with list of surviving and killed mutants",
+      "files": [],
+      "expectations": [
+        "Response contains 'mutation' or 'mutant'",
+        "Response contains 'survived' or 'killed' or 'mutation score'",
+        "Response references specific mutation operators (e.g., boundary, operator, return value)",
+        "Response does NOT suggest only running existing unit tests"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Generate unit tests that would catch all surviving mutants in this function that calculates shipping costs based on weight and distance.",
+      "expected_output": "Comprehensive unit tests with edge cases and boundary testing",
+      "files": [],
+      "expectations": [
+        "Response contains 'assert' or 'test_'",
+        "Response contains boundary or edge case testing",
+        "Response includes multiple test cases covering different scenarios",
+        "Response does NOT suggest only happy-path tests"
+      ]
+    }
+  ]
+}

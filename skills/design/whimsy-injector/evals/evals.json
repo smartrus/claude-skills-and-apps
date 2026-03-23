@@ -1,0 +1,31 @@
+{
+  "skill_name": "whimsy-injector",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Our checkout flow is functional but feels sterile and anxiety-inducing. Audit the 5-step flow and suggest micro-interactions, copy changes, and Easter eggs that make it feel more human without slowing users down.",
+      "expected_output": "Step-by-step audit with specific whimsy injection opportunities: micro-animation suggestions, personality-driven copy replacements, strategic Easter eggs, and validation that none increase task completion time",
+      "files": [],
+      "expectations": [
+        "Response contains 'micro-interaction' or 'animation' or 'delight'",
+        "Response contains specific step-by-step recommendations",
+        "Response does NOT suggest changes that increase task completion time",
+        "Response addresses copy/writing opportunities",
+        "Response includes implementation details for each suggestion"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Our 404 page and empty states are boring default screens. Design whimsical alternatives that turn error moments into brand-positive experiences while still being accessible and informative.",
+      "expected_output": "Whimsical design concepts for 404 and empty state screens that maintain accessibility, communicate necessary information, inject personality, and feel brand-aligned",
+      "files": [],
+      "expectations": [
+        "Response contains 'empty state' or '404' or 'error'",
+        "Response contains personality or brand-positive suggestion",
+        "Response references accessibility or screen reader compatibility",
+        "Response does NOT sacrifice information clarity for whimsy",
+        "Response includes specific copy or visual suggestions"
+      ]
+    }
+  ]
+}

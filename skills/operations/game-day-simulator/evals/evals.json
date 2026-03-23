@@ -1,0 +1,42 @@
+{
+  "skill_name": "game-day-simulator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We need to run a tabletop exercise for our team of 8 engineers next Friday. Simulate a complete AWS us-east-1 region failure affecting our multi-region e-commerce platform. We have a 99.95% SLA with customers and our RPO is 15 minutes. The exercise should last about 90 minutes.",
+      "expected_output": "Complete game day package with scenario brief, inject timeline, facilitator guide, and scoring rubric",
+      "files": [],
+      "expectations": [
+        "Response contains 'us-east-1' in the scenario context",
+        "Response includes an inject timeline or chronological sequence of events",
+        "Response references the SLA '99.95%' or RPO '15 minutes' in the scenario",
+        "Response includes a scoring rubric or evaluation criteria",
+        "Response contains 'SIMULATION' or 'EXERCISE' or 'DRILL' marking"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Design a game day scenario where our primary PostgreSQL RDS instance in us-west-2 suffers silent data corruption that isn't detected for 4 hours. We have cross-region read replicas in us-east-1, daily automated snapshots retained for 7 days, and WAL archiving to S3. Our RTO is 1 hour and RPO is 15 minutes. Team size is 6.",
+      "expected_output": "Database corruption tabletop with detection challenge, failover decisions, and data integrity verification",
+      "files": [],
+      "expectations": [
+        "Response mentions 'RTO' and addresses the 1-hour recovery target",
+        "Response includes failover to read replica or snapshot restoration as response options",
+        "Response contains a facilitator guide or inject timeline with timed events",
+        "Response mentions 'PostgreSQL' or 'RDS' in the scenario"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Create a tabletop exercise simulating an expired TLS certificate on our main API gateway (api.example.com) that cascades to break internal service-to-service mTLS communication. We run on Kubernetes with cert-manager and have 12 microservices. The certificate expires at 3 AM on a Saturday.",
+      "expected_output": "Certificate expiry cascade scenario with progressive failure injects and cert-manager remediation",
+      "files": [],
+      "expectations": [
+        "Response mentions 'cert-manager' or certificate renewal process",
+        "Response includes cascade failure progression showing how services break sequentially",
+        "Response contains remediation or response steps for certificate renewal",
+        "Response contains 'DRILL' or 'EXERCISE' or 'SIMULATION' marking"
+      ]
+    }
+  ]
+}

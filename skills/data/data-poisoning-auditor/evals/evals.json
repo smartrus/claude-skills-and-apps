@@ -1,0 +1,27 @@
+{
+  "skill_name": "data-poisoning-auditor",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "We suspect our image classification training dataset has been poisoned. The model suddenly misclassifies 'stop sign' images as 'speed limit'. Audit the dataset for label corruption and injected adversarial samples.",
+      "expected_output": "Detailed audit report identifying label corruption patterns, suspicious sample characteristics, adversarial indicators, and recommendations for dataset remediation",
+      "files": [],
+      "expectations": [
+        "Response contains 'label' and ('corruption' or 'flip' or 'manipulation')",
+        "Response contains detection methodology or statistical analysis",
+        "Response references adversarial or poisoning patterns"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Scan our NLP training pipeline for bias and data contamination. We need a risk score for each data source and a report on statistical anomalies in the label distribution.",
+      "expected_output": "Comprehensive risk assessment with source-level risk scores, statistical analysis of label distributions, identified biases, contamination indicators, and remediation priorities",
+      "files": [],
+      "expectations": [
+        "Response contains 'bias' or 'contamination'",
+        "Response contains 'risk score' or 'risk assessment'",
+        "Response contains statistical analysis or distribution comparison"
+      ]
+    }
+  ]
+}

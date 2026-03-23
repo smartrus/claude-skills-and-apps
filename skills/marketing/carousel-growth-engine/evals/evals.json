@@ -1,0 +1,29 @@
+{
+  "skill_name": "carousel-growth-engine",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Create a 10-slide LinkedIn carousel about 'Why microservices fail at scale' that's optimized for maximum engagement and shares. Include hook slide, content slides, and CTA.",
+      "expected_output": "Complete slide-by-slide carousel plan with opening hook designed to stop the scroll, progressively valuable content slides, engagement tactics, and clear call-to-action optimized for LinkedIn's algorithm and audience behavior.",
+      "files": [],
+      "expectations": [
+        "Response contains 'hook' or 'opening slide' or 'stop the scroll'",
+        "Response contains 'CTA' or 'call to action'",
+        "Response references LinkedIn-specific best practices or constraints",
+        "Response includes slide-by-slide content breakdown"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Design an Instagram carousel for our product launch. It needs to stop the scroll, deliver value in 7 slides, and drive traffic to our landing page. Optimize for the algorithm.",
+      "expected_output": "Visual-focused carousel content plan with Instagram-specific constraints, slide strategy for algorithm optimization, engagement boosters, and CTA strategy for driving traffic conversions.",
+      "files": [],
+      "expectations": [
+        "Response contains 'algorithm' or 'engagement' or 'stop scroll'",
+        "Response contains specific slide-by-slide content plan",
+        "Response references visual or design considerations",
+        "Response includes CTA and traffic driver strategy"
+      ]
+    }
+  ]
+}
