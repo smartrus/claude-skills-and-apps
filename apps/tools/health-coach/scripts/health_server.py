@@ -180,6 +180,11 @@ class HealthHandler(SimpleHTTPRequestHandler):
                 )
                 return
             habit_id = habit_id.strip()
+            if not habit_id:
+                self._send_json(
+                    {"error": "Missing required field: habit_id"}, 400
+                )
+                return
 
             # Validate habit_id against supported values
             # Derived from skill/SKILL.md "Habit Reference" table
